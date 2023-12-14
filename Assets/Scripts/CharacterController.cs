@@ -2,10 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
+[RequireComponent(typeof(AudioSource))]
 
 public class CharacterController : MonoBehaviour,IDamageble,ICanDie
 {
-   
+    private AudioSource m_characterAudioSource;
+
+    [SerializeField] private AudioClip m_damageAudio;
+    [SerializeField] private AudioClip m_healingAudio;
+    [SerializeField] private AudioClip m_deathAudio;
+    [SerializeField] private CharacterUI m_characterUI;
 
     [SerializeField] protected float m_maxPersonHealth = 10f;
 
@@ -31,22 +37,51 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
 
     protected MoveController m_characterMove;
 
-    // Start is called before the first frame update
-    public virtual void ReceiveDamage(float damage)
-    {
-        m_personHealth -= damage;
-        if (m_personHealth <= 0 && !m_isDead)
-        {
-            m_isDead = true;
+ 
 
-        }
-    }
+    // Start is called before the first frame update
+   
     protected virtual void Awake()
     {
         m_personHealth = m_maxPersonHealth;
         m_characterMove = GetComponent<MoveController>();
+        m_characterAudioSource = GetComponent<AudioSource>();
 
     }
+
+    public virtual void ReceiveDamage(float damage)
+    {
+        
+
+        m_personHealth -= damage;
+        if (m_personHealth <= 0 && !m_isDead)
+        {
+            m_isDead = true;
+        }
+
+        if (m_characterUI!=null)
+            m_characterUI.UpdateHealth(m_personHealth);
+        if (!IsDead)
+        {
+            if (damage > 0)
+            {
+                if (m_damageAudio != null) m_characterAudioSource.PlayOneShot(m_damageAudio);
+            }
+            else
+            {
+                if (m_healingAudio != null) m_characterAudioSource.PlayOneShot(m_healingAudio);
+            }
+
+        }
+        else if (IsDead)
+        {
+            if (m_deathAudio != null) m_characterAudioSource.PlayOneShot(m_deathAudio);
+
+        }
+
+    }
+
+
     protected virtual void Start()
     {
 

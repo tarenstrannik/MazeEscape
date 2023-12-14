@@ -135,8 +135,9 @@ GameObject:
   - component: {fileID: 10657709}
   - component: {fileID: 10657708}
   - component: {fileID: 10657707}
+  - component: {fileID: 10657710}
   m_Layer: 0
-  m_Name: Canvas
+  m_Name: PlayerHealthCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -151,16 +152,16 @@ RectTransform:
   m_GameObject: {fileID: 10657705}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 1.17}
-  m_LocalScale: {x: 0.02, y: 0.019999996, z: 0.019999996}
+  m_LocalScale: {x: 0.02, y: 0.019999994, z: 0.019999994}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 589803764}
-  m_Father: {fileID: 1808651415}
-  m_RootOrder: 0
+  m_Father: {fileID: 1874674811}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 2}
+  m_AnchoredPosition: {x: 0, y: 3}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &10657707
@@ -224,6 +225,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &10657710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10657705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcd8379fb65baa34d8cf65bdf3b33bdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_characterToFollow: {fileID: 1808651415}
+  m_deltaPosition: {x: 0, y: 1, z: 1}
 --- !u!114 &48265122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -748,7 +763,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1041320664}
   m_FillRect: {fileID: 2064324020}
   m_HandleRect: {fileID: 1041320663}
@@ -756,7 +771,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1031,6 +1046,7 @@ GameObject:
   - component: {fileID: 919541514}
   - component: {fileID: 919541513}
   - component: {fileID: 919541516}
+  - component: {fileID: 919541517}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Player
@@ -1180,6 +1196,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 915d0e31765eede4e9df2a69714715ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_damageAudio: {fileID: 0}
+  m_healingAudio: {fileID: 0}
+  m_deathAudio: {fileID: 0}
+  m_characterUI: {fileID: 0}
   m_maxPersonHealth: 10
   m_enemyDamage: 1
   m_whatToIncludeInLinecast:
@@ -1209,6 +1229,102 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!82 &919541517
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919541503}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &1032984840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1666,10 +1782,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 10657706}
+  m_Children: []
   m_Father: {fileID: 1874674811}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &1808651416
 CapsuleCollider:
@@ -1777,10 +1892,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e658465f9b15b2b4cb44848630ef02ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_maxPersonHealth: 10
   m_damageAudio: {fileID: 8300000, guid: db9482b1dfd5eff45850abd495424591, type: 3}
+  m_healingAudio: {fileID: 0}
   m_deathAudio: {fileID: 8300000, guid: 81e07c510c24c5f458103a3deb5283bd, type: 3}
-  uiDisplayObject: {fileID: 0}
+  m_characterUI: {fileID: 10657710}
+  m_maxPersonHealth: 10
 --- !u!114 &1808651422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2023,6 +2139,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 330585546}
+  - {fileID: 10657706}
   - {fileID: 1808651415}
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -2191,7 +2308,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2064324021
 MonoBehaviour:
