@@ -45,14 +45,14 @@ public class PlayerController : CharacterController, ITargetForEnemy
     {
         if(!IsDead)
         {
-            m_characterMove.SendMessage("CharacterMovement", value.Get<Vector2>());
+            m_characterMove.CharacterMovement(value.Get<Vector2>());
         }
     }
     private void OnMove(Vector2 direction)
     {
         if (!IsDead)
         {
-            m_characterMove.SendMessage("CharacterMovement", direction);
+            m_characterMove.CharacterMovement(direction);
         }
     }
 

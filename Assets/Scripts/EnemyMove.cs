@@ -12,7 +12,7 @@ public class EnemyMove : MoveController
     private Coroutine m_patrolingCoroutine = null;
     private Coroutine m_rotatingCoroutine = null;
 
-    private bool m_isPatroling = true;
+    
     private Vector3 m_curWayPoint=Vector3.zero;
     //parameter to check if rotation finished
     [SerializeField] private float m_minDeltaRotation = 0.01f;
@@ -44,7 +44,7 @@ public class EnemyMove : MoveController
 
     public void Patrol()
     {
-        m_isPatroling = true;
+
         //Get next point and Rotate to it
         m_curWayPoint = GetNextPatrolingPoint();
         m_rotatingCoroutine = StartCoroutine(RotatingCoroutine(m_curWayPoint));

@@ -16,7 +16,7 @@ public class MoveController : MonoBehaviour
     {
         m_personRb = GetComponent<Rigidbody>();
     }
-    private void CharacterMovement(Vector2 value)
+    public void CharacterMovement(Vector2 value)
     {
         m_movementDirection = value;
     }
