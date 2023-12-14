@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameUI m_gameUI;
 
+
+    // player
     [SerializeField] private GameObject m_playerPrefab;
     [SerializeField] private GameObject m_playerUIPrefab;
 
@@ -16,6 +18,9 @@ public class GameManager : MonoBehaviour
     private float m_playerHealth=10f;
     private float m_playerSpeed=5f;
     private float m_playerRotationSpeed = 20f;
+
+    //enemy
+    [SerializeField] private GameObject m_enemyPrefab;
 
     private float m_enemyHealth = 10f;
     private float m_enemySpeed = 3f;
@@ -27,14 +32,23 @@ public class GameManager : MonoBehaviour
     private float m_enemyDamage = 1f;
     private float m_enemyDamageDelay = 1f;
 
-    [SerializeField] private GameObject m_enemyPrefab;
-
+    //level
+    [SerializeField] GameObject[] m_wallPrefabs;
+    [SerializeField] GameObject m_finishPrefab;
+   
     [SerializeField] private Finish m_finish;
 
     private CharacterGenerator m_CharacterGenerator;
-
+    private LevelGenerator m_LevelGenerator;
     private void Awake()
     {
+        //generating level
+        m_LevelGenerator = new LevelGenerator();
+        m_LevelGenerator.GenerateLevel(m_wallPrefabs, m_finishPrefab,this);
+
+
+
+
         m_CharacterGenerator = new CharacterGenerator();
 
         //generating player
