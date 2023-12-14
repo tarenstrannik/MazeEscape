@@ -28,20 +28,19 @@ public class EnemyMove : MoveController
 
     public override void GoToPoint(Vector3 position)
     {
-        if (m_isPatroling)
-        {
-            m_isPatroling = false;
-            if(m_patrolingCoroutine!=null) StopCoroutine(m_patrolingCoroutine);
-            if(m_rotatingCoroutine!=null) StopCoroutine(m_rotatingCoroutine);
-            m_patrolingCoroutine = null;
-        };
+        if(m_rotatingCoroutine!=null) StopCoroutine(m_rotatingCoroutine);
+        
         NavMeshMove(position);
+        RotateAtDirection(new Vector3((position - transform.position).normalized.x, 0, (position - transform.position).normalized.z));
+        if (m_patrolingCoroutine == null) m_patrolingCoroutine = StartCoroutine(MovingCoroutine());
     }
 
     private void NavMeshMove(Vector3 position)
     {
         m_navMeshAgent.SetDestination(position);
     }
+
+    
 
     public void Patrol()
     {
@@ -51,9 +50,9 @@ public class EnemyMove : MoveController
         m_rotatingCoroutine = StartCoroutine(RotatingCoroutine(m_curWayPoint));
     }
 
-    private IEnumerator PatrolingCoroutine()
+    private IEnumerator MovingCoroutine()
     {
-        while (m_isPatroling == true)
+        while (true)
         {
             //checking if current movement finished
             if (!m_navMeshAgent.pathPending)
@@ -68,8 +67,10 @@ public class EnemyMove : MoveController
             }
             yield return null;
         }
+        m_patrolingCoroutine = null;
         Patrol();
     }
+    
     private IEnumerator RotatingCoroutine(Vector3 position)
     {
        
@@ -81,7 +82,7 @@ public class EnemyMove : MoveController
         }
         transform.rotation= Quaternion.LookRotation(new Vector3((position - transform.position).normalized.x, 0, (position - transform.position).normalized.z), Vector3.up);
         NavMeshMove(position);
-        m_patrolingCoroutine = StartCoroutine(PatrolingCoroutine());
+        if(m_patrolingCoroutine ==null) m_patrolingCoroutine = StartCoroutine(MovingCoroutine());
     }
     private Vector3 GetNextPatrolingPoint()
     {

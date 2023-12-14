@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
 
 
@@ -27,6 +28,9 @@ public class EnemyController : CharacterController
             return m_player;
         }
     }
+    [SerializeField] private LayerMask m_whatToIncludeInLinecast;
+    [SerializeField] private float m_visibilityDistance = 5f;
+    [SerializeField] private float m_visibilityAngle= 90f;
 
     protected override void Awake()
     {
@@ -42,13 +46,30 @@ public class EnemyController : CharacterController
     }
     protected override void Update()
     {
-       /* if (!m_player.GetComponent<PlayerController>().IsDead)
-        {
-            m_characterMove.GoToPoint(Player.transform.position);
-            
-            base.Update();
-        }*/
+        CheckIfCanSeePlayer();
+        base.Update();
     }
 
+    private void CheckIfCanSeePlayer()
+    {
+       if (!m_player.GetComponent<PlayerController>().IsDead)
+       {
+        if(Vector3.Distance(transform.position, m_player.transform.position)<=m_visibilityDistance)
+            {
+                
+                if(Vector3.Angle(transform.forward.normalized, (m_player.transform.position - transform.position).normalized) <= m_visibilityAngle)
+                {
+                    if (Physics.Linecast(transform.position, m_player.transform.position, out var hitInfo, m_whatToIncludeInLinecast))
+                    {
+                        if(hitInfo.collider.gameObject== m_player)
+                        {
+                            m_characterMove.GoToPoint(Player.transform.position);
+                        }
+                    }
+                }
+            }
+            
+       };
+    }
 
 }
