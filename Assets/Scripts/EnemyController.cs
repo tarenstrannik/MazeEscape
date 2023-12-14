@@ -14,23 +14,53 @@ public class EnemyController : CharacterController
         {
             return m_enemyDamage;
         } 
-        private set
+        set
         {
             m_enemyDamage = value;
         }
     }
-
-    private GameObject m_player;
+    [SerializeField] private float m_enemyDamageDelay = 1f;
+    public float EnemyDamageDelay
+    {
+        get
+        {
+            return m_enemyDamageDelay;
+        }
+        set
+        {
+            m_enemyDamageDelay = value;
+        }
+    }
+    [SerializeField] private GameObject m_player;
     public GameObject Player
     {
         get
         {
             return m_player;
         }
+        set
+        {
+            m_player = value;
+        }
     }
     [SerializeField] private LayerMask m_whatToIncludeInLinecast;
     [SerializeField] private float m_visibilityDistance = 5f;
-    [SerializeField] private float m_visibilityAngle= 90f;
+    public float VisibilityDistance
+    {
+        set
+        {
+            m_visibilityDistance = value;
+        }
+    }
+    [SerializeField] private float m_visibilityAngle= 45f;
+
+    public float VisibilityAngle
+    {
+        set
+        {
+            m_visibilityAngle = value;
+        }
+    }
 
     protected override void Awake()
     {
@@ -40,9 +70,7 @@ public class EnemyController : CharacterController
     protected override void Start()
     {
         base.Start();
-        m_player = GameObject.Find("Player");
-
-        //playerController = GetComponent<EnemyMove>().Player.GetComponent<PlayerController>();
+        
     }
     protected override void Update()
     {

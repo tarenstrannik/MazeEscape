@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Events;
+
 [RequireComponent(typeof(AudioSource))]
 
 public class CharacterController : MonoBehaviour,IDamageble,ICanDie
@@ -11,9 +13,24 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
     [SerializeField] private AudioClip m_damageAudio;
     [SerializeField] private AudioClip m_healingAudio;
     [SerializeField] private AudioClip m_deathAudio;
-    [SerializeField] private CharacterUI m_characterUI;
+    
+    
+    public UnityEvent m_death;
+    public UnityEvent<float> m_damageRecieved;
 
     [SerializeField] protected float m_maxPersonHealth = 10f;
+
+    public float MaxPersonHealth
+    {
+        get
+        {
+            return m_maxPersonHealth;
+        }
+        set
+        {
+            m_maxPersonHealth = value;
+        }
+    }
 
     private float m_personHealth;
     public float PersonHealth { 
@@ -46,21 +63,29 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
         m_personHealth = m_maxPersonHealth;
         m_characterMove = GetComponent<MoveController>();
         m_characterAudioSource = GetComponent<AudioSource>();
-
+        m_death.AddListener(Die);
+        
+        
     }
-
-    public virtual void ReceiveDamage(float damage)
+    protected virtual void Start()
     {
         
+    }
+    protected virtual void Update()
+    {
+
+    }
+    public virtual void ReceiveDamage(float damage)
+    {
 
         m_personHealth -= damage;
+        m_damageRecieved.Invoke(m_personHealth);
         if (m_personHealth <= 0 && !m_isDead)
         {
-            m_isDead = true;
+            m_death.Invoke();
+            
         }
 
-        if (m_characterUI!=null)
-            m_characterUI.UpdateHealth(m_personHealth);
         if (!IsDead)
         {
             if (damage > 0)
@@ -73,22 +98,16 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
             }
 
         }
-        else if (IsDead)
-        {
-            if (m_deathAudio != null) m_characterAudioSource.PlayOneShot(m_deathAudio);
-
-        }
+        
 
     }
 
-
-    protected virtual void Start()
+    public virtual void Die()
     {
+        m_isDead = true;
+        //m_characterMove.CharacterMovement(Vector2.zero);
+        if (m_deathAudio != null) m_characterAudioSource.PlayOneShot(m_deathAudio);
+    }
 
-    }
-    protected virtual void Update()
-    {
-       
-    }
 
 }

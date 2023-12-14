@@ -8,4 +8,6 @@ public interface ICanDie
     {
         get;
     }
+
+    public void Die();
 }

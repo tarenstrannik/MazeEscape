@@ -8,7 +8,21 @@ public class MoveController : MonoBehaviour
     protected Rigidbody m_personRb;
 
     [SerializeField] protected float m_speed = 5f;
+    public float Speed
+    {
+        set
+        {
+            m_speed = value;
+        }
+    }
     [SerializeField] protected float m_rotationSpeed = 20f;
+    public float RotationSpeed
+    {
+        set
+        {
+            m_rotationSpeed = value;
+        }
+    }
 
     protected Vector2 m_movementDirection = new Vector2(0, 0);
     

@@ -7,7 +7,23 @@ public class CharacterUI : MonoBehaviour
 {
     [SerializeField] protected Transform m_characterToFollow;
 
+    public Transform CharacterToFollow
+    {
+        set 
+        {
+            m_characterToFollow = value;
+        }
+    }
+
     [SerializeField] protected Vector3 m_deltaPosition;
+
+    public Vector3 DelatPosition
+    {
+        set
+        {
+            m_deltaPosition = value;
+        }
+    }
 
     protected Slider m_characterHealth;
     protected virtual void Awake()
