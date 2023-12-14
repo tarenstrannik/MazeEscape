@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.AI.Navigation;
+using UnityEngine.AI;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,9 +35,10 @@ public class GameManager : MonoBehaviour
     private float m_enemyDamageDelay = 1f;
 
     //level
-    [SerializeField] GameObject[] m_wallPrefabs;
+    [SerializeField] GameObject m_cellPrefab;
     [SerializeField] GameObject m_finishPrefab;
-   
+    [SerializeField] private NavMeshSurface m_navMeshSurface; 
+
     [SerializeField] private Finish m_finish;
 
     private CharacterGenerator m_CharacterGenerator;
@@ -44,7 +47,7 @@ public class GameManager : MonoBehaviour
     {
         //generating level
         m_LevelGenerator = new LevelGenerator();
-        m_LevelGenerator.GenerateLevel(m_wallPrefabs, m_finishPrefab,this);
+        m_LevelGenerator.GenerateLevel(m_cellPrefab, m_finishPrefab, m_navMeshSurface,this);
 
 
 
