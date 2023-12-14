@@ -20,4 +20,16 @@ public class CollisionController : MonoBehaviour
     {
         
     }
+    protected virtual void OnCollisionStay(Collision collision)
+    {
+
+    }
+    protected virtual void OnTriggerEnter(Collider other) 
+    {
+
+    }
+    protected virtual void OnTriggerStay(Collider other)
+    {
+
+    }
 }

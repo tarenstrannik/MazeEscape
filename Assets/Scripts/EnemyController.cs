@@ -42,12 +42,12 @@ public class EnemyController : CharacterController
     }
     protected override void Update()
     {
-        if (!m_player.GetComponent<PlayerController>().IsDead)
+       /* if (!m_player.GetComponent<PlayerController>().IsDead)
         {
-            m_characterMove.SendMessage("NavMeshMove",Player.transform.position);
+            m_characterMove.GoToPoint(Player.transform.position);
             
             base.Update();
-        }
+        }*/
     }
 
 

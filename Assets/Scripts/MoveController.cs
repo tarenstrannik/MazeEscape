@@ -27,7 +27,8 @@ public class MoveController : MonoBehaviour
     protected virtual void FixedUpdate()
     {
         MoveAtDirection();
-        RotateAtDirection();
+        var curDirection = new Vector3(m_movementDirection.normalized.x, 0, m_movementDirection.normalized.y);
+        RotateAtDirection(curDirection);
     }
 
     protected virtual void MoveAtDirection()
@@ -35,14 +36,19 @@ public class MoveController : MonoBehaviour
         m_personRb.velocity = Vector3.forward * m_speed * m_movementDirection.y + Vector3.right * m_speed * m_movementDirection.x;
     }
 
-    protected virtual void RotateAtDirection()
+    protected virtual void RotateAtDirection(Vector3 curDirection)
     {
-        var curDirection = new Vector3(m_movementDirection.normalized.x, 0, m_movementDirection.normalized.y);
+        
         if (curDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(curDirection, Vector3.up);
 
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, m_rotationSpeed * Time.deltaTime);
         }
+    }
+
+    public virtual void GoToPoint(Vector3 position)
+    {
+
     }
 }

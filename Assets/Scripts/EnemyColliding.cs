@@ -36,9 +36,9 @@ public class EnemyColliding : CollisionController
 
         m_curDamageTimer = m_damageDelay;
     }
-    private void OnCollisionStay(Collision collision)
+    protected override void OnCollisionStay(Collision collision)
     {
-
+        base.OnCollisionStay(collision);
         if (collision.gameObject.GetComponent<IDamageble>() != null && collision.gameObject.GetComponent<ITargetForEnemy>() != null && collision.gameObject.GetComponent<ICanDie>() != null && !collision.gameObject.GetComponent<ICanDie>().IsDead)
         {
             m_curDamageTimer -= Time.deltaTime;
@@ -50,6 +50,28 @@ public class EnemyColliding : CollisionController
 
         }
     }
+    protected override void OnTriggerEnter(Collider collision)
+    {
+        base.OnTriggerEnter(collision);
+        if (collision.gameObject.GetComponent<IDamageble>() != null && collision.gameObject.GetComponent<ITargetForEnemy>() != null && collision.gameObject.GetComponent<ICanDie>() != null && !collision.gameObject.GetComponent<ICanDie>().IsDead)
+        {
+            GiveDamage(collision.gameObject.GetComponent<IDamageble>());
+        }
+    }
+    
+    protected override void OnTriggerStay(Collider collision)
+    {
+        base.OnTriggerStay(collision);
+        if (collision.gameObject.GetComponent<IDamageble>() != null && collision.gameObject.GetComponent<ITargetForEnemy>() != null && collision.gameObject.GetComponent<ICanDie>() != null && !collision.gameObject.GetComponent<ICanDie>().IsDead)
+        {
+            m_curDamageTimer -= Time.deltaTime;
+            if (m_curDamageTimer <= 0)
+            {
+                //Bite player
+                GiveDamage(collision.gameObject.GetComponent<IDamageble>());
+            }
 
+        }
+    }
 
 }
