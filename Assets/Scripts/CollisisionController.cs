@@ -32,4 +32,8 @@ public class CollisionController : MonoBehaviour
     {
 
     }
+    protected virtual void OnTriggerExit(Collider other)
+    {
+
+    }
 }

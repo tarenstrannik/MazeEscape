@@ -9,6 +9,8 @@ public class EnemyColliding : CollisionController
     private EnemyController m_enemyController;
 
     private float m_curDamageTimer = 0f;
+
+    private Coroutine m_damageWaitingCoroutine = null;
     protected override void Awake()
     {
         base.Awake();
@@ -17,36 +19,48 @@ public class EnemyColliding : CollisionController
     }
 
 
-    private void GiveDamage(IDamageble damageTarget)
+    private void GiveDamage(Collider other)
     {
-        //Bite player
-        damageTarget.ReceiveDamage(m_enemyController.EnemyDamage);
-
-        m_curDamageTimer = m_enemyController.EnemyDamageDelay;
-    }
-
-    protected override void OnTriggerEnter(Collider collision)
-    {
-        base.OnTriggerEnter(collision);
-        if (collision.gameObject.GetComponent<IDamageble>() != null && collision.gameObject.GetComponent<ITargetForEnemy>() != null && collision.gameObject.GetComponent<ICanDie>() != null && !collision.gameObject.GetComponent<ICanDie>().IsDead)
+        if (other.gameObject.GetComponent<IDamageble>() != null && other.gameObject.GetComponent<ITargetForEnemy>() != null && other.gameObject.GetComponent<ICanDie>() != null && !other.gameObject.GetComponent<ICanDie>().IsDead)
         {
-            GiveDamage(collision.gameObject.GetComponent<IDamageble>());
-        }
-    }
-    
-    protected override void OnTriggerStay(Collider collision)
-    {
-        base.OnTriggerStay(collision);
-        if (collision.gameObject.GetComponent<IDamageble>() != null && collision.gameObject.GetComponent<ITargetForEnemy>() != null && collision.gameObject.GetComponent<ICanDie>() != null && !collision.gameObject.GetComponent<ICanDie>().IsDead)
-        {
-            m_curDamageTimer -= Time.deltaTime;
-            if (m_curDamageTimer <= 0)
+            if (m_damageWaitingCoroutine == null)
             {
-                //Bite player
-                GiveDamage(collision.gameObject.GetComponent<IDamageble>());
+                other.gameObject.GetComponent<IDamageble>().ReceiveDamage(m_enemyController.EnemyDamage);
+                m_damageWaitingCoroutine = StartCoroutine(DamageDelay());
+
             }
 
         }
+        
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+       
+        base.OnTriggerEnter(other);
+
+        GiveDamage(other);
+        
+    }
+    
+    protected override void OnTriggerStay(Collider other)
+    {
+        
+        
+        base.OnTriggerStay(other);
+        GiveDamage(other);
+    }
+   
+    private IEnumerator DamageDelay()
+    {
+        m_curDamageTimer = m_enemyController.EnemyDamageDelay;
+        while (m_curDamageTimer>=0)
+        {
+            m_curDamageTimer -= Time.deltaTime;
+            yield return null;
+        }
+        
+        m_damageWaitingCoroutine = null;
     }
 
 }
