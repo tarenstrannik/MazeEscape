@@ -15,40 +15,22 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject m_playerPrefab;
     [SerializeField] private GameObject m_playerUIPrefab;
 
-    [SerializeField] private Vector3 m_playerUIDelta = new Vector3(0, 1, 1);
-
-    private float m_playerHealth=10f;
-    private float m_playerSpeed=10f;
-    private float m_playerRotationSpeed = 20f;
+    [SerializeField] private Transform m_playerParentGroup;
 
     //enemy
     [SerializeField] private GameObject m_enemyPrefab;
-
-    private float m_enemyHealth = 10f;
-    private float m_enemySpeed = 5f;
-    private float m_enemyRotationSpeed = 120f;
-
-    private float m_enemyVisibilityDistance = 10f;
-    private float m_enemyVisibilityAngle=45f;
-
-    private float m_enemyDamage = 1f;
-    private float m_enemyDamageDelay = 1f;
-
-    private int m_minEnemyNumber = 1;
-    private int m_maxEnemyNumber = 5;
-    private int m_enemyWaypointsMaxNumber=4;
+    [SerializeField] private Transform m_enemyParentGroup;
 
     //level
     [SerializeField] GameObject m_cellPrefab;
     [SerializeField] GameObject m_finishPrefab;
     [SerializeField] private NavMeshSurface m_navMeshSurface;
-    [SerializeField] private int m_minFreeCells=0;
-    [SerializeField] private int m_xLabyrinthSize = 9;
-    [SerializeField] private int m_zLabyrinthSize = 5;
-
+    [SerializeField] private Transform m_levelParentGroup;
 
     private CharacterGenerator m_CharacterGenerator;
     private LevelGenerator m_LevelGenerator;
+
+    [SerializeField] private GameParameters m_gameParams;
     private void Awake()
     {
         Time.timeScale = 0;
@@ -65,47 +47,63 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GenerationCoroutine()
     {
-        m_LevelGenerator.GenerateLevel(m_cellPrefab, m_finishPrefab, m_navMeshSurface, m_xLabyrinthSize, m_zLabyrinthSize);
+        m_LevelGenerator.GenerateLevel(m_cellPrefab, m_finishPrefab, m_navMeshSurface, m_gameParams.m_xLabyrinthSize, m_gameParams.m_zLabyrinthSize, m_levelParentGroup);
         while(!m_LevelGenerator.IsGenerationFinished)
         {
             yield return null;
         }
         m_LevelGenerator.GetFinish().m_gameWin.AddListener(GameWin);
 
-        //generating player
-        var playerCell = m_LevelGenerator.GetFreeRandomCell();
+        var player = GeneratePlayer();
 
-        var player = (PlayerController)m_CharacterGenerator.GenerateCharacter(m_playerPrefab, playerCell.transform.position, m_playerUIPrefab, m_playerUIDelta);
-
-        m_CharacterGenerator.ConfigureCharacter(player, m_playerHealth, m_playerSpeed, m_playerRotationSpeed);
-        SubscribeToPlayer(player);
-
-        var maxEnemyCount = m_maxEnemyNumber < m_xLabyrinthSize * m_zLabyrinthSize - 2 - m_minFreeCells ? m_maxEnemyNumber : m_xLabyrinthSize * m_zLabyrinthSize - 2 - m_minFreeCells;
-
-        //generating enemy
-        var enemyCount = Random.Range(m_minEnemyNumber, maxEnemyCount + 1);
-        for (var i = 0; i < enemyCount; i++)
-        {
-            var enemyCell = m_LevelGenerator.GetFreeRandomCell();
-            var enemy = (EnemyController)m_CharacterGenerator.GenerateCharacter(m_enemyPrefab, enemyCell.transform.position, null, Vector3.zero);
-            
-            m_CharacterGenerator.ConfigureCharacter(enemy, m_enemyHealth, m_enemySpeed, m_enemyRotationSpeed);
-
-            List<Vector3> enemyWaypoints = new List<Vector3>();
-            var randomWaypointsNumber = Random.Range(2, m_enemyWaypointsMaxNumber + 1);
-           for(var j=0;j< randomWaypointsNumber; j++)
-            {
-                enemyWaypoints.Add(m_LevelGenerator.GetWayPointInCell(enemyCell, m_enemyPrefab.transform.localScale.x/2));
-               
-            }
-
-            m_CharacterGenerator.ConfigureEnemy(enemy, player, m_enemyVisibilityDistance, m_enemyVisibilityAngle, m_enemyDamage, m_enemyDamageDelay, enemyWaypoints);
-            //for enemies also need to add list of waypoints give link to level generator to ask for points
-        }
+        GenerateEnemies(player);
 
         StartGame();
 
     }
+
+    private PlayerController GeneratePlayer()
+    {
+        //generating player
+        var playerCell = m_LevelGenerator.GetFreeRandomCell();
+
+        var player = (PlayerController)m_CharacterGenerator.GenerateCharacter(m_playerPrefab, playerCell.transform.position, m_playerUIPrefab, m_gameParams.m_playerUIDelta, m_playerParentGroup);
+
+        m_CharacterGenerator.ConfigureCharacter(player, m_gameParams.m_playerHealth, m_gameParams.m_playerSpeed, m_gameParams.m_playerRotationSpeed);
+        SubscribeToPlayer(player);
+
+        return player;
+        
+    }
+
+    private void GenerateEnemies(PlayerController player)
+    {
+        //generating enemy
+
+        
+
+        var enemyCount = Random.Range(m_gameParams.m_minEnemyCount, m_gameParams.m_maxEnemyCount + 1);
+        for (var i = 0; i < enemyCount; i++)
+        {
+            var enemyCell = m_LevelGenerator.GetFreeRandomCell();
+            var enemy = (EnemyController)m_CharacterGenerator.GenerateCharacter(m_enemyPrefab, enemyCell.transform.position, null, Vector3.zero, m_enemyParentGroup);
+
+            m_CharacterGenerator.ConfigureCharacter(enemy, m_gameParams.m_enemyHealth, m_gameParams.m_enemySpeed, m_gameParams.m_enemyRotationSpeed);
+
+            List<Vector3> enemyWaypoints = new List<Vector3>();
+            var randomWaypointsNumber = Random.Range(m_gameParams.m_enemyWaypointsMinNumber, m_gameParams.m_enemyWaypointsMaxNumber + 1);
+            for (var j = 0; j < randomWaypointsNumber; j++)
+            {
+                enemyWaypoints.Add(m_LevelGenerator.GetWayPointInCell(enemyCell, m_enemyPrefab.transform.localScale.x / 2));
+
+            }
+
+            m_CharacterGenerator.ConfigureEnemy(enemy, player, m_gameParams.m_enemyVisibilityDistance, m_gameParams.m_enemyVisibilityAngle, m_gameParams.m_enemyDamage, m_gameParams.m_enemyDamageDelay, enemyWaypoints);
+            
+        }
+    }
+
+
     private void StartGame()
     {
         Time.timeScale = 1;

@@ -1546,15 +1546,17 @@ MonoBehaviour:
     type: 3}
   m_playerUIPrefab: {fileID: 7346797784871337739, guid: b89352f3df6a4cf439bb83e8fe22bfd1,
     type: 3}
-  m_playerUIDelta: {x: 0, y: 2, z: 2}
+  m_playerParentGroup: {fileID: 1874674811}
   m_enemyPrefab: {fileID: 6477138311226343170, guid: d070e776af0576443a082f26dd845ba6,
     type: 3}
+  m_enemyParentGroup: {fileID: 1116957636}
   m_cellPrefab: {fileID: 4446301363648342377, guid: 5726e83f9ce11bb4584c640f789e6985,
     type: 3}
   m_finishPrefab: {fileID: 4632672289478581070, guid: 90426694fe62dc7488eaac2c00e12a9d,
     type: 3}
   m_navMeshSurface: {fileID: 1241744339}
-  m_finish: {fileID: 0}
+  m_levelParentGroup: {fileID: 1713297868}
+  m_gameParams: {fileID: 11400000, guid: 7f49ec36b8c1d2440b1e9461fb822dbf, type: 2}
 --- !u!1 &865210790
 GameObject:
   m_ObjectHideFlags: 0

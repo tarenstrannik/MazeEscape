@@ -31,16 +31,16 @@ public class EnemyController : CharacterController
             m_enemyDamageDelay = value;
         }
     }
-    [SerializeField] private GameObject m_player;
-    public GameObject Player
+    [SerializeField] private GameObject m_target;
+    public GameObject Target
     {
         get
         {
-            return m_player;
+            return m_target;
         }
         set
         {
-            m_player = value;
+            m_target = value;
         }
     }
     [SerializeField] private LayerMask m_whatToIncludeInLinecast;
@@ -80,18 +80,18 @@ public class EnemyController : CharacterController
 
     private void CheckIfCanSeePlayer()
     {
-       if (!m_player.GetComponent<PlayerController>().IsDead)
+       if (!m_target.GetComponent<PlayerController>().IsDead)
        {
-        if(Vector3.Distance(transform.position, m_player.transform.position)<=m_visibilityDistance)
+        if(Vector3.Distance(transform.position, m_target.transform.position)<=m_visibilityDistance)
             {
                 
-                if(Vector3.Angle(transform.forward.normalized, (m_player.transform.position - transform.position).normalized) <= m_visibilityAngle)
+                if(Vector3.Angle(transform.forward.normalized, (m_target.transform.position - transform.position).normalized) <= m_visibilityAngle)
                 {
-                    if (Physics.Linecast(transform.position, m_player.transform.position, out var hitInfo, m_whatToIncludeInLinecast))
+                    if (Physics.Linecast(transform.position, m_target.transform.position, out var hitInfo, m_whatToIncludeInLinecast))
                     {
-                        if(hitInfo.collider.gameObject== m_player)
+                        if(hitInfo.collider.gameObject== m_target)
                         {
-                            m_characterMove.GoToPoint(Player.transform.position);
+                            m_characterMove.GoToPoint(m_target.transform.position);
                         }
                     }
                 }

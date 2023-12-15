@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20333c6d70ac5364ba9909cddb5606d2, type: 3}
+  m_Name: Game Parameters
+  m_EditorClassIdentifier: 
+  m_playerUIDelta: {x: 0, y: 1, z: 2}
+  m_playerHealth: 10
+  m_playerSpeed: 10
+  m_playerRotationSpeed: 20
+  m_enemyHealth: 10
+  m_enemySpeed: 5
+  m_enemyRotationSpeed: 120
+  m_enemyVisibilityDistance: 10
+  m_enemyVisibilityAngle: 45
+  m_enemyDamage: 1
+  m_enemyDamageDelay: 1
+  m_minEnemyCount: 2
+  m_maxEnemyCount: 6
+  m_enemyWaypointsMinNumber: 2
+  m_enemyWaypointsMaxNumber: 5
+  m_xLabyrinthSize: 9
+  m_zLabyrinthSize: 5

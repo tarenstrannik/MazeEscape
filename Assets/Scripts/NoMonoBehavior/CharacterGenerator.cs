@@ -8,15 +8,15 @@ public class CharacterGenerator
 {
 
 
-    public CharacterController GenerateCharacter(GameObject characterPrefab, Vector3 characterPosition, GameObject characterUIPrefab, Vector3 characterUIdelta)
+    public CharacterController GenerateCharacter(GameObject characterPrefab, Vector3 characterPosition, GameObject characterUIPrefab, Vector3 characterUIdelta,Transform parent)
     {
         var character = GameObject.Instantiate(characterPrefab, characterPosition, characterPrefab.transform.rotation).GetComponent<CharacterController>();
-
+        character.transform.SetParent(parent);
         if (characterUIPrefab != null)
         {
             
             var characterUI = GameObject.Instantiate(characterUIPrefab, characterPosition + characterUIdelta, characterUIPrefab.transform.rotation).GetComponent<CharacterUI>();
-            
+            characterUI.transform.SetParent(parent);
             characterUI.CharacterToFollow = character.transform;
             characterUI.DelatPosition = characterUIdelta;
             character.m_damageRecieved.AddListener(characterUI.UpdateHealth);
@@ -39,9 +39,9 @@ public class CharacterGenerator
     }
     
 
-    public void ConfigureEnemy(EnemyController character, CharacterController player, float visibilityDistance, float visibilityAngle, float enemyDamage,float enemyDamageDelay, List<Vector3> enemyWaypoints)
+    public void ConfigureEnemy(EnemyController character, CharacterController target, float visibilityDistance, float visibilityAngle, float enemyDamage,float enemyDamageDelay, List<Vector3> enemyWaypoints)
     {
-        character.Player = player.transform.gameObject;
+        character.Target = target.transform.gameObject;
         character.VisibilityDistance = visibilityDistance;
         character.VisibilityAngle = visibilityAngle;
         character.EnemyDamage = enemyDamage;
