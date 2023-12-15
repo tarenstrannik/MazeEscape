@@ -42,5 +42,8 @@ public class PlayerController : CharacterController, ITargetForEnemy
         }
     }
 
-
+    public void OnCancel()
+    {
+        m_cancelEvent.Invoke();
+    }
 }

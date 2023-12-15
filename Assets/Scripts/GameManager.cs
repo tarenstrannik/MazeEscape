@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 {
 
     [SerializeField] private GameUI m_gameUI;
-
+    private bool m_isGameActive = true;
 
     // player
     [SerializeField] private GameObject m_playerPrefab;
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
         var player = (PlayerController)m_CharacterGenerator.GenerateCharacter(m_playerPrefab, playerCell.transform.position, m_playerUIPrefab, m_playerUIDelta);
 
         m_CharacterGenerator.ConfigureCharacter(player, m_playerHealth, m_playerSpeed, m_playerRotationSpeed);
-        m_CharacterGenerator.ConfigurePlayer(player, this);
+        SubscribeToPlayer(player);
 
         //generating enemy
         var enemyCount = Random.Range(m_minEnemyNumber, m_maxEnemyNumber + 1);
@@ -106,19 +106,44 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    public void SubscribeToPlayer(CharacterController character)
+    {
+        character.m_death.AddListener(GameOver);
+        character.m_cancelEvent.AddListener(EscapeButtonAction);
+
+
+    }
 
 
     public void GameOver()
     {
+        m_isGameActive = false;
         Time.timeScale = 0;
         m_gameUI.ShowGameOverScreen();
     }
     public void GameWin()
     {
+        m_isGameActive = false;
         Time.timeScale = 0;
         m_gameUI.ShowGameWinScreen();
     }
 
+    private void EscapeButtonAction()
+    {
+        if (m_isGameActive)
+        {
+            TogglePauseGame();
+        }
+        else
+        {
+            ExitGame();
+        }
+    }
+    public void TogglePauseGame()
+    {
+        Time.timeScale = Time.timeScale == 0 ? 1 : 0; ;
+        m_gameUI.TogglePauseScreen();
+    }
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

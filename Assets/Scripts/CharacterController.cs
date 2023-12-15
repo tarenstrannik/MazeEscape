@@ -16,6 +16,7 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
     
     
     public UnityEvent m_death;
+    public UnityEvent m_cancelEvent;
     public UnityEvent<float> m_damageRecieved;
 
     [SerializeField] protected float m_maxPersonHealth = 10f;

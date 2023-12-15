@@ -37,10 +37,7 @@ public class CharacterGenerator
 
         }
     }
-    public void ConfigurePlayer(CharacterController character, GameManager gameManager)
-    {
-        character.m_death.AddListener(gameManager.GameOver);
-    }
+    
 
     public void ConfigureEnemy(EnemyController character, CharacterController player, float visibilityDistance, float visibilityAngle, float enemyDamage,float enemyDamageDelay, List<Vector3> enemyWaypoints)
     {
