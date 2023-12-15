@@ -41,9 +41,11 @@ public class GameManager : MonoBehaviour
     //level
     [SerializeField] GameObject m_cellPrefab;
     [SerializeField] GameObject m_finishPrefab;
-    [SerializeField] private NavMeshSurface m_navMeshSurface; 
+    [SerializeField] private NavMeshSurface m_navMeshSurface;
+    [SerializeField] private int m_minFreeCells=0;
+    [SerializeField] private int m_xLabyrinthSize = 9;
+    [SerializeField] private int m_zLabyrinthSize = 5;
 
-    [SerializeField] private Finish m_finish;
 
     private CharacterGenerator m_CharacterGenerator;
     private LevelGenerator m_LevelGenerator;
@@ -63,11 +65,12 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GenerationCoroutine()
     {
-        m_LevelGenerator.GenerateLevel(m_cellPrefab, m_finishPrefab, m_navMeshSurface,this);
+        m_LevelGenerator.GenerateLevel(m_cellPrefab, m_finishPrefab, m_navMeshSurface, m_xLabyrinthSize, m_zLabyrinthSize);
         while(!m_LevelGenerator.IsGenerationFinished)
         {
             yield return null;
         }
+        m_LevelGenerator.GetFinish().m_gameWin.AddListener(GameWin);
 
         //generating player
         var playerCell = m_LevelGenerator.GetFreeRandomCell();
@@ -77,8 +80,10 @@ public class GameManager : MonoBehaviour
         m_CharacterGenerator.ConfigureCharacter(player, m_playerHealth, m_playerSpeed, m_playerRotationSpeed);
         SubscribeToPlayer(player);
 
+        var maxEnemyCount = m_maxEnemyNumber < m_xLabyrinthSize * m_zLabyrinthSize - 2 - m_minFreeCells ? m_maxEnemyNumber : m_xLabyrinthSize * m_zLabyrinthSize - 2 - m_minFreeCells;
+
         //generating enemy
-        var enemyCount = Random.Range(m_minEnemyNumber, m_maxEnemyNumber + 1);
+        var enemyCount = Random.Range(m_minEnemyNumber, maxEnemyCount + 1);
         for (var i = 0; i < enemyCount; i++)
         {
             var enemyCell = m_LevelGenerator.GetFreeRandomCell();
