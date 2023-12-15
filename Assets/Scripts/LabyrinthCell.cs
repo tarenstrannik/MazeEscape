@@ -17,6 +17,15 @@ public class LabyrinthCell : MonoBehaviour
         }
     }
 
+    private float m_innerSize = 9f;
+    public float InnerSize
+    {
+        get
+        {
+            return m_innerSize;
+        }
+    }
+
     [SerializeField] private GameObject[] m_walls;
     
 

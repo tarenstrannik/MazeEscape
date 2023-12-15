@@ -6,7 +6,6 @@ using UnityEngine.Analytics;
 
 public class CharacterGenerator
 {
-   
 
 
     public CharacterController GenerateCharacter(GameObject characterPrefab, Vector3 characterPosition, GameObject characterUIPrefab, Vector3 characterUIdelta)
@@ -43,12 +42,13 @@ public class CharacterGenerator
         character.m_death.AddListener(gameManager.GameOver);
     }
 
-    public void ConfigureEnemy(EnemyController character, CharacterController player, float visibilityDistance, float visibilityAngle, float enemyDamage,float enemyDamageDelay)
+    public void ConfigureEnemy(EnemyController character, CharacterController player, float visibilityDistance, float visibilityAngle, float enemyDamage,float enemyDamageDelay, List<Vector3> enemyWaypoints)
     {
         character.Player = player.transform.gameObject;
         character.VisibilityDistance = visibilityDistance;
         character.VisibilityAngle = visibilityAngle;
         character.EnemyDamage = enemyDamage;
         character.EnemyDamageDelay = enemyDamageDelay;
+        character.GetComponent<EnemyMove>().PatrolingPoints = enemyWaypoints;
     }
 }

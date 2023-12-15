@@ -18,21 +18,25 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Vector3 m_playerUIDelta = new Vector3(0, 1, 1);
 
     private float m_playerHealth=10f;
-    private float m_playerSpeed=5f;
+    private float m_playerSpeed=10f;
     private float m_playerRotationSpeed = 20f;
 
     //enemy
     [SerializeField] private GameObject m_enemyPrefab;
 
     private float m_enemyHealth = 10f;
-    private float m_enemySpeed = 3f;
+    private float m_enemySpeed = 5f;
     private float m_enemyRotationSpeed = 120f;
 
-    private float m_enemyVisibilityDistance = 5f;
+    private float m_enemyVisibilityDistance = 10f;
     private float m_enemyVisibilityAngle=45f;
 
     private float m_enemyDamage = 1f;
     private float m_enemyDamageDelay = 1f;
+
+    private int m_minEnemyNumber = 1;
+    private int m_maxEnemyNumber = 5;
+    private int m_enemyWaypointsMaxNumber=4;
 
     //level
     [SerializeField] GameObject m_cellPrefab;
@@ -45,37 +49,73 @@ public class GameManager : MonoBehaviour
     private LevelGenerator m_LevelGenerator;
     private void Awake()
     {
+        Time.timeScale = 0;
         //generating level
         m_LevelGenerator = new LevelGenerator();
-        m_LevelGenerator.GenerateLevel(m_cellPrefab, m_finishPrefab, m_navMeshSurface,this);
-
-
-
 
         m_CharacterGenerator = new CharacterGenerator();
 
+        StartCoroutine(GenerationCoroutine());
+
+
+    }
+
+
+    private IEnumerator GenerationCoroutine()
+    {
+        m_LevelGenerator.GenerateLevel(m_cellPrefab, m_finishPrefab, m_navMeshSurface,this);
+        while(!m_LevelGenerator.IsGenerationFinished)
+        {
+            yield return null;
+        }
+
         //generating player
-        var player = (PlayerController)m_CharacterGenerator.GenerateCharacter(m_playerPrefab, new Vector3(5, 1, 5), m_playerUIPrefab, m_playerUIDelta);
+        var playerCell = m_LevelGenerator.GetFreeRandomCell();
+
+        var player = (PlayerController)m_CharacterGenerator.GenerateCharacter(m_playerPrefab, playerCell.transform.position, m_playerUIPrefab, m_playerUIDelta);
+
         m_CharacterGenerator.ConfigureCharacter(player, m_playerHealth, m_playerSpeed, m_playerRotationSpeed);
         m_CharacterGenerator.ConfigurePlayer(player, this);
 
         //generating enemy
-        var enemy=(EnemyController)m_CharacterGenerator.GenerateCharacter(m_enemyPrefab, new Vector3(-4, 1, -4), null, Vector3.zero);
-        m_CharacterGenerator.ConfigureCharacter(enemy, m_enemyHealth, m_enemySpeed, m_enemyRotationSpeed);
-        m_CharacterGenerator.ConfigureEnemy(enemy, player, m_enemyVisibilityDistance, m_enemyVisibilityAngle, m_enemyDamage, m_enemyDamageDelay);
-        //for enemies also need to add list of waypoints
-    }
+        var enemyCount = Random.Range(m_minEnemyNumber, m_maxEnemyNumber + 1);
+        for (var i = 0; i < enemyCount; i++)
+        {
+            var enemyCell = m_LevelGenerator.GetFreeRandomCell();
+            var enemy = (EnemyController)m_CharacterGenerator.GenerateCharacter(m_enemyPrefab, enemyCell.transform.position, null, Vector3.zero);
+            
+            m_CharacterGenerator.ConfigureCharacter(enemy, m_enemyHealth, m_enemySpeed, m_enemyRotationSpeed);
 
-   
+            List<Vector3> enemyWaypoints = new List<Vector3>();
+            var randomWaypointsNumber = Random.Range(2, m_enemyWaypointsMaxNumber + 1);
+           for(var j=0;j< randomWaypointsNumber; j++)
+            {
+                enemyWaypoints.Add(m_LevelGenerator.GetWayPointInCell(enemyCell, m_enemyPrefab.transform.localScale.x/2));
+               
+            }
+
+            m_CharacterGenerator.ConfigureEnemy(enemy, player, m_enemyVisibilityDistance, m_enemyVisibilityAngle, m_enemyDamage, m_enemyDamageDelay, enemyWaypoints);
+            //for enemies also need to add list of waypoints give link to level generator to ask for points
+        }
+
+        StartGame();
+
+    }
+    private void StartGame()
+    {
+        Time.timeScale = 1;
+    }
 
 
 
     public void GameOver()
     {
+        Time.timeScale = 0;
         m_gameUI.ShowGameOverScreen();
     }
     public void GameWin()
     {
+        Time.timeScale = 0;
         m_gameUI.ShowGameWinScreen();
     }
 

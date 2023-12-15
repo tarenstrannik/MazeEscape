@@ -34,7 +34,7 @@ Transform:
   m_GameObject: {fileID: 6477138311226343170}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -14.61, y: 1, z: 4.93}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6477138311443300552}
@@ -166,11 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_speed: 3
   m_rotationSpeed: 120
-  m_patrolingPoints:
-  - {x: -10, y: 0, z: 0}
-  - {x: -5, y: 0, z: 0}
-  - {x: -5, y: 0, z: -5}
-  - {x: -10, y: 0, z: -5}
+  m_patrolingPoints: []
   m_minDeltaRotation: 0.1
 --- !u!114 &6477138311226343156
 MonoBehaviour:

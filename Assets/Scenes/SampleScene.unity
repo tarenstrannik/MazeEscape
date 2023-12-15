@@ -1066,7 +1066,7 @@ MonoBehaviour:
     type: 3}
   m_playerUIPrefab: {fileID: 7346797784871337739, guid: b89352f3df6a4cf439bb83e8fe22bfd1,
     type: 3}
-  m_playerUIDelta: {x: 0, y: 1, z: 1}
+  m_playerUIDelta: {x: 0, y: 2, z: 2}
   m_enemyPrefab: {fileID: 6477138311226343170, guid: d070e776af0576443a082f26dd845ba6,
     type: 3}
   m_cellPrefab: {fileID: 4446301363648342377, guid: 5726e83f9ce11bb4584c640f789e6985,

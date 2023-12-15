@@ -7,8 +7,14 @@ using static UnityEngine.LightAnchor;
 public class EnemyMove : MoveController
 {
     private NavMeshAgent m_navMeshAgent;
-    [SerializeField] List<Vector3> m_patrolingPoints;
-
+    [SerializeField] private List<Vector3> m_patrolingPoints = new List<Vector3>();
+    public List<Vector3> PatrolingPoints
+    {
+        set
+        {
+            m_patrolingPoints = value;
+        }
+    }
     private Coroutine m_patrolingCoroutine = null;
     private Coroutine m_rotatingCoroutine = null;
 
@@ -23,9 +29,13 @@ public class EnemyMove : MoveController
         m_navMeshAgent = GetComponent<NavMeshAgent>();
         m_navMeshAgent.speed = m_speed;
         m_navMeshAgent.angularSpeed = m_rotationSpeed;
-        Patrol();
+       
     }
-
+    protected override void Start()
+    {
+        base.Start();
+        if (m_patrolingPoints.Count > 0) Patrol();
+    }
     public override void GoToPoint(Vector3 position)
     {
         if(m_rotatingCoroutine!=null) StopCoroutine(m_rotatingCoroutine);
