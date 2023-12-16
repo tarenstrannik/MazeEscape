@@ -119,21 +119,23 @@ public class EnemyRaycasting : RaycastingController
         {
             if (Physics.Raycast(startPoint, curVector, out hit, curDrawAndDamageDistance))
             {
-                
+
                 if (hit.collider.gameObject != m_target)
                 {
-                    
-                    point = hit.point;
-                }
-                else if(Physics.Raycast(startPoint, curVector, out hit, curDrawAndDamageDistance, m_raycastMask))
-                {
-                    m_isTargetInDamageZone = true;
                     point = hit.point;
                 }
                 else
                 {
-                    point = transform.position + curVector * curDrawAndDamageDistance;
-                };
+                    m_isTargetInDamageZone = true;
+                    if (Physics.Raycast(startPoint, curVector, out hit, curDrawAndDamageDistance, m_raycastMask))
+                    {    
+                        point = hit.point;
+                    }
+                    else
+                    {
+                        point = transform.position + curVector * curDrawAndDamageDistance;
+                    };
+                }
             }
             else
             {
@@ -145,14 +147,31 @@ public class EnemyRaycasting : RaycastingController
 
         }
 
-        if (Physics.Raycast(startPoint, rightVector, out hit, m_drawAndDamageDistance, m_raycastMask))
+        if (Physics.Raycast(startPoint, rightVector, out hit, m_drawAndDamageDistance))
         {
-            point = hit.point;
+
+            if (hit.collider.gameObject != m_target)
+            {
+                point = hit.point;
+            }
+            else
+            {
+                m_isTargetInDamageZone = true;
+                if (Physics.Raycast(startPoint, rightVector, out hit, m_drawAndDamageDistance, m_raycastMask))
+                {
+                    point = hit.point;
+                }
+                else
+                {
+                    point = transform.position + rightVector * m_drawAndDamageDistance;
+                };
+            }
         }
         else
         {
-            point = transform.position + curVector * m_drawAndDamageDistance;
-        }
+            point = transform.position + rightVector * curDrawAndDamageDistance;
+        };
+        
 
         m_forwardLineRenderer.SetPosition(m_rayPointsCount-1, point);
         m_leftLineRenderer.SetPosition(0, startPoint);
