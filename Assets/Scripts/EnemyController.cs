@@ -31,41 +31,19 @@ public class EnemyController : CharacterController
             m_enemyDamageDelay = value;
         }
     }
-    [SerializeField] private GameObject m_target;
-    public GameObject Target
-    {
-        get
-        {
-            return m_target;
-        }
-        set
-        {
-            m_target = value;
-        }
-    }
-    [SerializeField] private LayerMask m_whatToIncludeInLinecast;
-    [SerializeField] private float m_visibilityDistance = 5f;
-    public float VisibilityDistance
-    {
-        set
-        {
-            m_visibilityDistance = value;
-        }
-    }
-    [SerializeField] private float m_visibilityAngle= 45f;
 
-    public float VisibilityAngle
-    {
-        set
-        {
-            m_visibilityAngle = value;
-        }
-    }
+    private Coroutine m_damageWaitingCoroutine = null;
+    private float m_curDamageTimer = 0f;
 
+    private EnemyRaycasting m_enemyRaycasting;
+    
+   
     protected override void Awake()
     {
         base.Awake();
-        
+        m_enemyRaycasting = GetComponent<EnemyRaycasting>();
+
+
     }
     protected override void Start()
     {
@@ -74,30 +52,37 @@ public class EnemyController : CharacterController
     }
     protected override void Update()
     {
-        CheckIfCanSeePlayer();
+        var target = m_enemyRaycasting.CheckIfCanSeePlayer();
+        if (target!=null)
+            m_characterMove.GoToPoint(target.transform.position);
         base.Update();
     }
 
-    private void CheckIfCanSeePlayer()
+    public void GiveDamage(GameObject target)
     {
-       if (!m_target.GetComponent<PlayerController>().IsDead)
-       {
-        if(Vector3.Distance(transform.position, m_target.transform.position)<=m_visibilityDistance)
+        if (target.GetComponent<IDamageble>() != null && target.GetComponent<ITargetForEnemy>() != null && target.GetComponent<ICanDie>() != null && !target.GetComponent<ICanDie>().IsDead)
+        {
+            if (m_damageWaitingCoroutine == null)
             {
-                
-                if(Vector3.Angle(transform.forward.normalized, (m_target.transform.position - transform.position).normalized) <= m_visibilityAngle)
-                {
-                    if (Physics.Linecast(transform.position, m_target.transform.position, out var hitInfo, m_whatToIncludeInLinecast))
-                    {
-                        if(hitInfo.collider.gameObject== m_target)
-                        {
-                            m_characterMove.GoToPoint(m_target.transform.position);
-                        }
-                    }
-                }
+                target.GetComponent<IDamageble>().ReceiveDamage(m_enemyDamage);
+                m_damageWaitingCoroutine = StartCoroutine(DamageDelay());
+
             }
-            
-       };
+
+        }
+
+    }
+
+    private IEnumerator DamageDelay()
+    {
+        m_curDamageTimer = m_enemyDamageDelay;
+        while (m_curDamageTimer >= 0)
+        {
+            m_curDamageTimer -= Time.deltaTime;
+            yield return null;
+        }
+
+        m_damageWaitingCoroutine = null;
     }
 
 }

@@ -25,6 +25,12 @@ public class GameParameters : ScriptableObject
     public float m_enemyVisibilityDistance = 10f;
     [Tooltip("To left and right from forward")]
     public float m_enemyVisibilityAngle = 45f;
+    [Tooltip("Step of Raycasting")]
+    public float m_enemyDeltaAngle = 1f;
+
+    public float m_enemyDrawAndDamageDistance = 5f;
+    [Tooltip("To left and right from forward")]
+    public float m_enemyDrawAndDamageAngle = 45f;
 
     public float m_enemyDamage = 1f;
     public float m_enemyDamageDelay = 1f;

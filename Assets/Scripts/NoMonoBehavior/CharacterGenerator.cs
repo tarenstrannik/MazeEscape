@@ -39,11 +39,17 @@ public class CharacterGenerator
     }
     
 
-    public void ConfigureEnemy(EnemyController character, CharacterController target, float visibilityDistance, float visibilityAngle, float enemyDamage,float enemyDamageDelay, List<Vector3> enemyWaypoints)
+    public void ConfigureEnemy(EnemyController character, CharacterController target, float visibilityDistance, float visibilityAngle, float deltaAngle, float drawAndDamageDistance, float drawAndDamageAngle, float enemyDamage,float enemyDamageDelay, List<Vector3> enemyWaypoints)
     {
-        character.Target = target.transform.gameObject;
-        character.VisibilityDistance = visibilityDistance;
-        character.VisibilityAngle = visibilityAngle;
+        var enemyRaycasting = character.GetComponent<EnemyRaycasting>();
+        enemyRaycasting.Target = target.transform.gameObject;
+        enemyRaycasting.VisibilityDistance = visibilityDistance;
+        enemyRaycasting.VisibilityAngle = visibilityAngle;
+
+        enemyRaycasting.DrawAndDamageDistance = drawAndDamageDistance;
+        enemyRaycasting.DeltaAngle = deltaAngle;
+        enemyRaycasting.DrawAndDamageAngle = drawAndDamageAngle;
+
         character.EnemyDamage = enemyDamage;
         character.EnemyDamageDelay = enemyDamageDelay;
         character.GetComponent<EnemyMove>().PatrolingPoints = enemyWaypoints;

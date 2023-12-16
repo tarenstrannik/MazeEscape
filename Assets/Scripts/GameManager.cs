@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
 
             }
 
-            m_CharacterGenerator.ConfigureEnemy(enemy, player, m_gameParams.m_enemyVisibilityDistance, m_gameParams.m_enemyVisibilityAngle, m_gameParams.m_enemyDamage, m_gameParams.m_enemyDamageDelay, enemyWaypoints);
+            m_CharacterGenerator.ConfigureEnemy(enemy, player, m_gameParams.m_enemyVisibilityDistance, m_gameParams.m_enemyVisibilityAngle, m_gameParams.m_enemyDeltaAngle, m_gameParams.m_enemyDrawAndDamageDistance, m_gameParams.m_enemyDrawAndDamageAngle, m_gameParams.m_enemyDamage, m_gameParams.m_enemyDamageDelay, enemyWaypoints);
             
         }
     }
