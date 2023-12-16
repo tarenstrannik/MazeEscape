@@ -60,7 +60,8 @@ public class EnemyRaycasting : RaycastingController
 
     [SerializeField] LayerMask m_raycastMask;
 
-    private int m_rayPointsCount;
+    private int m_damageRayPointsCount;
+    private int m_visibilityRayPointsCount;
 
     private GameObject m_target;
 
@@ -88,8 +89,10 @@ public class EnemyRaycasting : RaycastingController
     {
         base.Start();
 
-        m_rayPointsCount = Mathf.CeilToInt(2 * m_drawAndDamageAngle / m_deltaAngle) + 1;
-        m_forwardLineRenderer.positionCount = m_rayPointsCount;
+        m_damageRayPointsCount = Mathf.CeilToInt(2 * m_drawAndDamageAngle / m_deltaAngle) + 1;
+        m_forwardLineRenderer.positionCount = m_damageRayPointsCount;
+
+        m_visibilityRayPointsCount = Mathf.CeilToInt(2 * m_visibilityAngle / m_deltaAngle) + 1;
     }
 
     // Update is called once per frame
@@ -115,7 +118,7 @@ public class EnemyRaycasting : RaycastingController
         RaycastHit hit;
         Vector3 point;
         float curDrawAndDamageDistance = m_drawAndDamageDistance;
-        for (var i = 0; i < m_rayPointsCount - 1; i++)
+        for (var i = 0; i < m_damageRayPointsCount - 1; i++)
         {
             if (Physics.Raycast(startPoint, curVector, out hit, curDrawAndDamageDistance))
             {
@@ -173,12 +176,12 @@ public class EnemyRaycasting : RaycastingController
         };
         
 
-        m_forwardLineRenderer.SetPosition(m_rayPointsCount-1, point);
+        m_forwardLineRenderer.SetPosition(m_damageRayPointsCount - 1, point);
         m_leftLineRenderer.SetPosition(0, startPoint);
         m_leftLineRenderer.SetPosition(1, m_forwardLineRenderer.GetPosition(0));
 
         m_rightLineRenderer.SetPosition(0, startPoint);
-        m_rightLineRenderer.SetPosition(1, m_forwardLineRenderer.GetPosition(m_rayPointsCount - 1));
+        m_rightLineRenderer.SetPosition(1, m_forwardLineRenderer.GetPosition(m_damageRayPointsCount - 1));
 
     }
 
@@ -191,18 +194,35 @@ public class EnemyRaycasting : RaycastingController
             if (Vector3.Distance(transform.position, m_target.transform.position) <= m_visibilityDistance)
             {
 
-                if (Vector3.Angle(transform.forward.normalized, (m_target.transform.position - transform.position).normalized) <= m_visibilityAngle)
+                var startPoint = transform.position;
+
+                var leftVector = Quaternion.AngleAxis(m_visibilityAngle, Vector3.up) * transform.forward;
+                var rightVector = Quaternion.AngleAxis(-m_visibilityAngle, Vector3.up) * transform.forward;
+
+                var curVector = leftVector;
+                RaycastHit hit;
+
+
+                for (var i = 0; i < m_visibilityRayPointsCount - 1; i++)
                 {
-                    if (Physics.Linecast(transform.position, m_target.transform.position, out var hitInfo))
+                    if (Physics.Raycast(startPoint, curVector, out hit, m_visibilityDistance))
                     {
-                        if (hitInfo.collider.gameObject == m_target)
+                        
+                        if (hit.collider.gameObject == m_target)
                         {
                             return m_target;
                         }
                     }
+                    curVector = Quaternion.AngleAxis(-m_deltaAngle, Vector3.up) * curVector;
+                }
+                if (Physics.Raycast(startPoint, rightVector, out hit, m_visibilityDistance))
+                {
+                    if (hit.collider.gameObject == m_target)
+                    {
+                        return m_target;
+                    }
                 }
             }
-
         };
 
         return null;
