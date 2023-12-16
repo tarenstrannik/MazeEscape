@@ -29,6 +29,7 @@ public class PlayerController : CharacterController, ITargetForEnemy
 
     private void OnMove(InputValue value)
     {
+       
         if(!IsDead)
         {
             m_characterMove.CharacterMovement(value.Get<Vector2>());
@@ -36,6 +37,7 @@ public class PlayerController : CharacterController, ITargetForEnemy
     }
     private void OnMove(Vector2 direction)
     {
+        
         if (!IsDead)
         {
             m_characterMove.CharacterMovement(direction);

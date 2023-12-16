@@ -39,6 +39,16 @@ public class EnemyRaycasting : RaycastingController
         }
     }
 
+    [SerializeField] private bool m_isFrontDamageLineFlat;
+
+    public bool IsFrontDamageLineFlat
+    {
+        set
+        {
+            m_isFrontDamageLineFlat = value;
+        }
+    }
+
     [SerializeField] private float m_visibilityDistance = 5f;
     public float VisibilityDistance
     {
@@ -55,6 +65,16 @@ public class EnemyRaycasting : RaycastingController
         set
         {
             m_visibilityAngle = value;
+        }
+    }
+
+    [SerializeField] private bool m_isFrontViewLineFlat;
+
+    public bool IsFrontViewLineFlat
+    {
+        set
+        {
+            m_isFrontViewLineFlat = value;
         }
     }
 
@@ -146,7 +166,7 @@ public class EnemyRaycasting : RaycastingController
             };
             m_forwardLineRenderer.SetPosition(i, point);
             curVector = Quaternion.AngleAxis(-m_deltaAngle, Vector3.up) * curVector;
-            curDrawAndDamageDistance = m_drawAndDamageDistance * Mathf.Cos(Mathf.Deg2Rad * m_drawAndDamageAngle) / Mathf.Cos(Mathf.Deg2Rad * (m_drawAndDamageAngle - (i+1) * m_deltaAngle));
+            if(m_isFrontDamageLineFlat) curDrawAndDamageDistance = m_drawAndDamageDistance * Mathf.Cos(Mathf.Deg2Rad * m_drawAndDamageAngle) / Mathf.Cos(Mathf.Deg2Rad * (m_drawAndDamageAngle - (i+1) * m_deltaAngle));
 
         }
 
@@ -202,10 +222,10 @@ public class EnemyRaycasting : RaycastingController
                 var curVector = leftVector;
                 RaycastHit hit;
 
-
+                float curVisibilityDistance = m_visibilityDistance;
                 for (var i = 0; i < m_visibilityRayPointsCount - 1; i++)
                 {
-                    if (Physics.Raycast(startPoint, curVector, out hit, m_visibilityDistance))
+                    if (Physics.Raycast(startPoint, curVector, out hit, curVisibilityDistance))
                     {
                         
                         if (hit.collider.gameObject == m_target)
@@ -214,6 +234,7 @@ public class EnemyRaycasting : RaycastingController
                         }
                     }
                     curVector = Quaternion.AngleAxis(-m_deltaAngle, Vector3.up) * curVector;
+                    if(m_isFrontViewLineFlat) curVisibilityDistance = m_visibilityDistance * Mathf.Cos(Mathf.Deg2Rad * m_drawAndDamageAngle) / Mathf.Cos(Mathf.Deg2Rad * (m_drawAndDamageAngle - (i + 1) * m_deltaAngle));
                 }
                 if (Physics.Raycast(startPoint, rightVector, out hit, m_visibilityDistance))
                 {

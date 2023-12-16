@@ -25,15 +25,21 @@ public class GameParameters : ScriptableObject
     public float m_enemyVisibilityDistance = 10f;
     [Tooltip("To left and right from forward")]
     public float m_enemyVisibilityAngle = 45f;
-    [Tooltip("Step of Raycasting")]
-    public float m_enemyDeltaAngle = 1f;
+    public bool m_isFrontViewLineFlat = true;
+   
 
     public float m_enemyDrawAndDamageDistance = 5f;
     [Tooltip("To left and right from forward")]
     public float m_enemyDrawAndDamageAngle = 45f;
+    public bool m_isFrontDamageLineFlat = true;
+
+    [Tooltip("Step of Raycasting")]
+    public float m_enemyDeltaAngle = 1f;
 
     public float m_enemyDamage = 1f;
     public float m_enemyDamageDelay = 1f;
+
+    
 
     public int m_minEnemyCount = 1;
     public int m_maxEnemyCount = 5;
@@ -43,8 +49,11 @@ public class GameParameters : ScriptableObject
     [Range(2, 100)]
     public int m_enemyWaypointsMaxNumber = 4;
 
+    
+    
+
     //level
- 
+
     [Range (2,9)]
     public int m_xLabyrinthSize = 9;
     [Range(2, 5)]

@@ -21,9 +21,11 @@ MonoBehaviour:
   m_enemyRotationSpeed: 120
   m_enemyVisibilityDistance: 10
   m_enemyVisibilityAngle: 45
-  m_enemyDeltaAngle: 1
+  m_isFrontViewLineFlat: 1
   m_enemyDrawAndDamageDistance: 5
   m_enemyDrawAndDamageAngle: 45
+  m_isFrontDamageLineFlat: 1
+  m_enemyDeltaAngle: 1
   m_enemyDamage: 1
   m_enemyDamageDelay: 1
   m_minEnemyCount: 2

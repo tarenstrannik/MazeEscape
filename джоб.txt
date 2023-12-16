@@ -1,26 +1,3 @@
 
 мобильные контролы
-Until the enemy sees the player, he must follow his patrol path.
-
-
-When the player is inside of the damage area the enemy starts to follow the player.
-
-
-т.е. триггер преследования не увидеть игрока, а когда он в дамаж ареа?
-
-задать вопрос про противоречие. когда враг должен начинать преследование - когда он видит игрока, или когда игрок в демедж ареа?
-
-Also, I see some contradiction (or lack of instructions) in task:
-
-"Until the enemy sees the player, he must follow his patrol path."
-...
-"When the player is inside of the damage area the enemy starts to follow the player."
-
-So there are states "Enemy don't see player - patroling"
-
-"Player inside damage area - start following"
-
-But what should enemy do if he sees player, but player is not inside the damage area?
-
-Right now i did that enemy begin following player at the moment he sees him. But if this is incorrect, please, provide additional instructions:)
 

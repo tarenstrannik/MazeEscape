@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.AI.Navigation;
 using UnityEngine.AI;
+using UnityEngine.InputSystem.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -70,6 +71,7 @@ public class GameManager : MonoBehaviour
         var player = (PlayerController)m_CharacterGenerator.GenerateCharacter(m_playerPrefab, playerCell.transform.position, m_playerUIPrefab, m_gameParams.m_playerUIDelta, m_playerParentGroup);
 
         m_CharacterGenerator.ConfigureCharacter(player, m_gameParams.m_playerHealth, m_gameParams.m_playerSpeed, m_gameParams.m_playerRotationSpeed);
+        m_CharacterGenerator.ConfigurePlayer(player, m_gameUI.gameObject.GetComponent<InputSystemUIInputModule>());
         SubscribeToPlayer(player);
 
         return player;
@@ -98,7 +100,7 @@ public class GameManager : MonoBehaviour
 
             }
 
-            m_CharacterGenerator.ConfigureEnemy(enemy, player, m_gameParams.m_enemyVisibilityDistance, m_gameParams.m_enemyVisibilityAngle, m_gameParams.m_enemyDeltaAngle, m_gameParams.m_enemyDrawAndDamageDistance, m_gameParams.m_enemyDrawAndDamageAngle, m_gameParams.m_enemyDamage, m_gameParams.m_enemyDamageDelay, enemyWaypoints);
+            m_CharacterGenerator.ConfigureEnemy(enemy, player, m_gameParams.m_enemyVisibilityDistance, m_gameParams.m_enemyVisibilityAngle, m_gameParams.m_enemyDeltaAngle, m_gameParams.m_enemyDrawAndDamageDistance, m_gameParams.m_enemyDrawAndDamageAngle, m_gameParams.m_enemyDamage, m_gameParams.m_enemyDamageDelay, enemyWaypoints, m_gameParams.m_isFrontDamageLineFlat, m_gameParams.m_isFrontViewLineFlat);
             
         }
     }

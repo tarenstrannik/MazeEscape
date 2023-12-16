@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 
 public class CharacterGenerator
 {
@@ -37,18 +39,23 @@ public class CharacterGenerator
 
         }
     }
-    
+    public void ConfigurePlayer(PlayerController character, InputSystemUIInputModule uiInputModule)
+    {
+        character.GetComponent<PlayerInput>().uiInputModule = uiInputModule;
+    }
 
-    public void ConfigureEnemy(EnemyController character, CharacterController target, float visibilityDistance, float visibilityAngle, float deltaAngle, float drawAndDamageDistance, float drawAndDamageAngle, float enemyDamage,float enemyDamageDelay, List<Vector3> enemyWaypoints)
+    public void ConfigureEnemy(EnemyController character, CharacterController target, float visibilityDistance, float visibilityAngle, float deltaAngle, float drawAndDamageDistance, float drawAndDamageAngle, float enemyDamage,float enemyDamageDelay, List<Vector3> enemyWaypoints, bool isFrontDamageLineFlat, bool isFrontViewLineFlat)
     {
         var enemyRaycasting = character.GetComponent<EnemyRaycasting>();
         enemyRaycasting.Target = target.transform.gameObject;
         enemyRaycasting.VisibilityDistance = visibilityDistance;
         enemyRaycasting.VisibilityAngle = visibilityAngle;
+        enemyRaycasting.IsFrontViewLineFlat=isFrontViewLineFlat;
 
         enemyRaycasting.DrawAndDamageDistance = drawAndDamageDistance;
         enemyRaycasting.DeltaAngle = deltaAngle;
         enemyRaycasting.DrawAndDamageAngle = drawAndDamageAngle;
+        enemyRaycasting.IsFrontDamageLineFlat = isFrontDamageLineFlat;
 
         character.EnemyDamage = enemyDamage;
         character.EnemyDamageDelay = enemyDamageDelay;
