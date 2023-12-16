@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//old version of enemy giving player damage, based on trigger collision area on the enemy (if need to use, should be improverd, because can damage player through the wall)
 public class EnemyColliding : CollisionController
 {
     // Start is called before the first frame update

@@ -108,7 +108,7 @@ public class EnemyRaycasting : RaycastingController
     protected override void Start()
     {
         base.Start();
-
+        //calculating number of rays
         m_damageRayPointsCount = Mathf.CeilToInt(2 * m_drawAndDamageAngle / m_deltaAngle) + 1;
         m_forwardLineRenderer.positionCount = m_damageRayPointsCount;
 
@@ -126,9 +126,9 @@ public class EnemyRaycasting : RaycastingController
 
     private void DrawDamageZone()
     {
-        
+        //presize but costly solution. can be simplified by increasing step. or if precision isn/t necesssary replaced by checking distance, angle from forward to the player direction (if is near) and one ray/line cast to check, if player isn't hidden behind the wall
         var startPoint = transform.position;
-        
+        //calculating bounds of raycasting
         var leftVector = Quaternion.AngleAxis(m_drawAndDamageAngle, Vector3.up) * transform.forward;
         var rightVector = Quaternion.AngleAxis(-m_drawAndDamageAngle, Vector3.up) * transform.forward;
 
@@ -138,22 +138,25 @@ public class EnemyRaycasting : RaycastingController
         RaycastHit hit;
         Vector3 point;
         float curDrawAndDamageDistance = m_drawAndDamageDistance;
+        //going from left to the right to check all damage zone if there are walls or player in it
         for (var i = 0; i < m_damageRayPointsCount - 1; i++)
         {
             if (Physics.Raycast(startPoint, curVector, out hit, curDrawAndDamageDistance))
             {
-
+                //if no player that it is wall and end of the ray/part of the damage line
                 if (hit.collider.gameObject != m_target)
                 {
                     point = hit.point;
                 }
                 else
                 {
+                    //if hit on player than he should be damaged. but also need to repeat raycast with masking player, to draw beauty damage area
                     m_isTargetInDamageZone = true;
                     if (Physics.Raycast(startPoint, curVector, out hit, curDrawAndDamageDistance, m_raycastMask))
                     {    
                         point = hit.point;
                     }
+                    //if no hit drawing at the max distance
                     else
                     {
                         point = transform.position + curVector * curDrawAndDamageDistance;
@@ -166,10 +169,11 @@ public class EnemyRaycasting : RaycastingController
             };
             m_forwardLineRenderer.SetPosition(i, point);
             curVector = Quaternion.AngleAxis(-m_deltaAngle, Vector3.up) * curVector;
+            //changing distance of cast according to angle to achieve triangle damage zone, if selected in parameters
             if(m_isFrontDamageLineFlat) curDrawAndDamageDistance = m_drawAndDamageDistance * Mathf.Cos(Mathf.Deg2Rad * m_drawAndDamageAngle) / Mathf.Cos(Mathf.Deg2Rad * (m_drawAndDamageAngle - (i+1) * m_deltaAngle));
 
         }
-
+        //last ray drawing not in cycle but precisely along right border in case if last step will be over the right bound
         if (Physics.Raycast(startPoint, rightVector, out hit, m_drawAndDamageDistance))
         {
 
@@ -195,7 +199,7 @@ public class EnemyRaycasting : RaycastingController
             point = transform.position + rightVector * curDrawAndDamageDistance;
         };
         
-
+        //drawing line
         m_forwardLineRenderer.SetPosition(m_damageRayPointsCount - 1, point);
         m_leftLineRenderer.SetPosition(0, startPoint);
         m_leftLineRenderer.SetPosition(1, m_forwardLineRenderer.GetPosition(0));
@@ -206,7 +210,7 @@ public class EnemyRaycasting : RaycastingController
     }
 
     
-
+    //the same principle to check if player can be seen
     public GameObject CheckIfCanSeePlayer()
     {
         if (!m_target.GetComponent<PlayerController>().IsDead)

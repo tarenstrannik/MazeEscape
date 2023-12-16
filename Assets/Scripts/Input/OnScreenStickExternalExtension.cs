@@ -15,7 +15,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 #endif
-////TODO: custom icon for OnScreenStick component
+////custom class on base of Unity's on screen stick - but with making InputAction.CallbackContext methods public to have possibility to pass to them actions from floating stick
 
 namespace UnityEngine.InputSystem.OnScreen
 {
@@ -193,6 +193,7 @@ namespace UnityEngine.InputSystem.OnScreen
         {
             ((RectTransform)transform).anchoredPosition = m_PointerDownPos = m_StartPos;
             SendValueToControl(Vector2.zero);
+            
         }
 
         private void OnPointerDown(InputAction.CallbackContext ctx)

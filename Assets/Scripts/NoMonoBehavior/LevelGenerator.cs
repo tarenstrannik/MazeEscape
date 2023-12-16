@@ -28,17 +28,20 @@ public class LevelGenerator
     {
         m_labyrinthX = xSize;
         m_labyrinthZ = zSize;
+        //calculating offstep from the border to place labyrinth in center of gameplace
         m_deltaX = (m_labyrinthX - 1) * cellPrefab.transform.localScale.x / 2;
         m_deltaZ = (m_labyrinthZ - 1) * cellPrefab.transform.localScale.z / 2;
 
         GenerateLabyrinth(cellPrefab, parent);
 
+
+        //generating exit
         var cellForFinish = GetFreeRandomCell();
         var finishPos = new Vector3(cellForFinish.transform.position.x, finishPrefab.transform.position.y, cellForFinish.transform.position.z);
         m_finish = GameObject.Instantiate(finishPrefab, finishPos, finishPrefab.transform.rotation).GetComponent<Finish>();
         m_finish.transform.SetParent(parent);
         
-
+        //building enemies routes
         navMeshSurface.BuildNavMesh();
 
         m_isGenerationFinished = true;
@@ -51,7 +54,9 @@ public class LevelGenerator
 
     private void GenerateLabyrinth(GameObject cellPrefab,Transform parent)
     {  
+        //creating array to store labyrinth
         m_labyrinthCellsArray = new LabyrinthCell[m_labyrinthX, m_labyrinthZ];
+        //and precreating all labyrinth cells with all walls by the grid
         for (var x= 0;x < m_labyrinthX; x++)
         {
             for(var z = 0; z< m_labyrinthZ; z++)
@@ -59,20 +64,23 @@ public class LevelGenerator
                 
                 m_labyrinthCellsArray[x,z] = GameObject.Instantiate(cellPrefab, new Vector3(x * cellPrefab.transform.localScale.x- m_deltaX, cellPrefab.transform.position.y, z * cellPrefab.transform.localScale.z- m_deltaZ), Quaternion.identity).GetComponent<LabyrinthCell>();
                 m_labyrinthCellsArray[x, z].transform.SetParent(parent);
+                //also adding cells to the list of unused for the next generation purposes (enemies etc)
                 m_unusedlabyrinthCells.Add(m_labyrinthCellsArray[x, z]);
             }
         };
 
+        //start building paths through the labyrinth from the first cell
         BuildLabyrinthStepByStep(null, m_labyrinthCellsArray[0, 0]);
         
     }
 
     private void BuildLabyrinthStepByStep(LabyrinthCell prevCell, LabyrinthCell curCell)
     {
+        //marking cell as proceeded
         curCell.Proceed();
         if (prevCell != null)
         {
-
+            //checking, from what direction we've come
             int prevXIndex = (int)ReturnCellIndexes(prevCell).x;
             int prevZIndex = (int)ReturnCellIndexes(prevCell).y;
 
@@ -80,7 +88,7 @@ public class LevelGenerator
             int curZIndex = (int)ReturnCellIndexes(curCell).y;
 
             int indexToRemovePrev = 0;
-
+            //and calculating, what walls whould be removed. Walls are marked from 0 to 3 clockwise from the top so we can calculate this without separate function for the left right etc
             if (prevZIndex == curZIndex)
             {
                 indexToRemovePrev = (curXIndex - prevXIndex + 4) % 4;
@@ -94,12 +102,12 @@ public class LevelGenerator
             int indexToRemoveCur = (indexToRemovePrev + 2) % 4;
 
             
-
+            //removing annececary walls
             curCell.DeactivateWall(indexToRemoveCur);
             prevCell.DeactivateWall(indexToRemovePrev);
         }
 
-        //LabyrinthCell nextCell;
+        //getting next unused cell and repeating recursively untill no where to go. then come back one step and trying to find another way and so on
         var nextCell = GetRandomNextCell(curCell);
         while (nextCell != null)
         {
@@ -109,6 +117,7 @@ public class LevelGenerator
         };
     }
 
+    //calculating cell indexes by its coordinates
     private Vector2 ReturnCellIndexes(LabyrinthCell cell)
     {
         float xIndex = ((cell.transform.position.x + m_deltaX) / cell.transform.localScale.x);
@@ -121,6 +130,7 @@ public class LevelGenerator
         int xIndex = (int)ReturnCellIndexes(currentCell).x;
         int zIndex = (int)ReturnCellIndexes(currentCell).y;
         
+        //checking neighbours and adding them to list if unvisited
         if (xIndex - 1 >= 0)
         {
             if (!m_labyrinthCellsArray[xIndex - 1, zIndex].IsProceeded)
@@ -149,6 +159,7 @@ public class LevelGenerator
                 cellsOptions.Add(m_labyrinthCellsArray[xIndex, zIndex + 1]);
             }
         }
+        //get random cell from the list if not empty
         if (cellsOptions.Count > 0)
         { 
             var random = Random.Range(0, cellsOptions.Count);
@@ -174,6 +185,7 @@ public class LevelGenerator
         return cellToReturn;
     }
 
+    //generating waypoint coordinates in cell for the enemy
     public Vector3 GetWayPointInCell(LabyrinthCell cell,float deltaToWalls)
     {
         var range = cell.InnerSize / 2 - deltaToWalls;

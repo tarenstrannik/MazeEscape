@@ -72,7 +72,7 @@ public class EnemyController : CharacterController
         }
 
     }
-
+    //adding delay between player recieving damage
     private IEnumerator DamageDelay()
     {
         m_curDamageTimer = m_enemyDamageDelay;

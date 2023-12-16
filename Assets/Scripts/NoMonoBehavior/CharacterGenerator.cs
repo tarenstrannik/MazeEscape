@@ -13,11 +13,15 @@ public class CharacterGenerator
     public CharacterController GenerateCharacter(GameObject characterPrefab, Vector3 characterPosition, GameObject characterUIPrefab, Vector3 characterUIdelta,Transform parent)
     {
         var character = GameObject.Instantiate(characterPrefab, characterPosition, characterPrefab.transform.rotation).GetComponent<CharacterController>();
+        //moving object to special group to make it simplier to debug in unity
         character.transform.SetParent(parent);
+
+        //adding helthbar to the character if it is supplied
         if (characterUIPrefab != null)
         {
             
             var characterUI = GameObject.Instantiate(characterUIPrefab, characterPosition + characterUIdelta, characterUIPrefab.transform.rotation).GetComponent<CharacterUI>();
+            //moving object to special group to make it simplier to debug in unity
             characterUI.transform.SetParent(parent);
             characterUI.CharacterToFollow = character.transform;
             characterUI.DelatPosition = characterUIdelta;
@@ -41,6 +45,7 @@ public class CharacterGenerator
     }
     public void ConfigurePlayer(PlayerController character, InputSystemUIInputModule uiInputModule)
     {
+        //linking uiinput for player input with game's ui
         character.GetComponent<PlayerInput>().uiInputModule = uiInputModule;
     }
 

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 //using UnityEngine.Windows;
 using UnityEngine.InputSystem;
 
@@ -44,8 +46,10 @@ public class PlayerController : CharacterController, ITargetForEnemy
         }
     }
 
+    public UnityEvent m_cancelEvent;
     public void OnCancel()
     {
+        
         m_cancelEvent.Invoke();
     }
 }

@@ -9,6 +9,7 @@ using UnityEngine.InputSystem.UI;
 public class GameManager : MonoBehaviour
 {
 
+
     [SerializeField] private GameUI m_gameUI;
     private bool m_isGameActive = true;
 
@@ -49,10 +50,15 @@ public class GameManager : MonoBehaviour
     private IEnumerator GenerationCoroutine()
     {
         m_LevelGenerator.GenerateLevel(m_cellPrefab, m_finishPrefab, m_navMeshSurface, m_gameParams.m_xLabyrinthSize, m_gameParams.m_zLabyrinthSize, m_levelParentGroup);
+        
+        //waiting while level is generated
+
         while(!m_LevelGenerator.IsGenerationFinished)
         {
             yield return null;
         }
+
+
         m_LevelGenerator.GetFinish().m_gameWin.AddListener(GameWin);
 
         var player = GeneratePlayer();
@@ -70,8 +76,12 @@ public class GameManager : MonoBehaviour
 
         var player = (PlayerController)m_CharacterGenerator.GenerateCharacter(m_playerPrefab, playerCell.transform.position, m_playerUIPrefab, m_gameParams.m_playerUIDelta, m_playerParentGroup);
 
+        //configuring general character params
         m_CharacterGenerator.ConfigureCharacter(player, m_gameParams.m_playerHealth, m_gameParams.m_playerSpeed, m_gameParams.m_playerRotationSpeed);
+        //configuring params specific to player
         m_CharacterGenerator.ConfigurePlayer(player, m_gameUI.gameObject.GetComponent<InputSystemUIInputModule>());
+
+        //subscribe to player events
         SubscribeToPlayer(player);
 
         return player;
@@ -83,15 +93,18 @@ public class GameManager : MonoBehaviour
         //generating enemy
 
         
-
+        //random count of enemies
         var enemyCount = Random.Range(m_gameParams.m_minEnemyCount, m_gameParams.m_maxEnemyCount + 1);
         for (var i = 0; i < enemyCount; i++)
         {
             var enemyCell = m_LevelGenerator.GetFreeRandomCell();
+
             var enemy = (EnemyController)m_CharacterGenerator.GenerateCharacter(m_enemyPrefab, enemyCell.transform.position, null, Vector3.zero, m_enemyParentGroup);
 
+            //configuring general character params
             m_CharacterGenerator.ConfigureCharacter(enemy, m_gameParams.m_enemyHealth, m_gameParams.m_enemySpeed, m_gameParams.m_enemyRotationSpeed);
 
+            //creating patroling points for each enemy randomly
             List<Vector3> enemyWaypoints = new List<Vector3>();
             var randomWaypointsNumber = Random.Range(m_gameParams.m_enemyWaypointsMinNumber, m_gameParams.m_enemyWaypointsMaxNumber + 1);
             for (var j = 0; j < randomWaypointsNumber; j++)
@@ -99,7 +112,7 @@ public class GameManager : MonoBehaviour
                 enemyWaypoints.Add(m_LevelGenerator.GetWayPointInCell(enemyCell, m_enemyPrefab.transform.localScale.x / 2));
 
             }
-
+            //configuring params specific to enemy
             m_CharacterGenerator.ConfigureEnemy(enemy, player, m_gameParams.m_enemyVisibilityDistance, m_gameParams.m_enemyVisibilityAngle, m_gameParams.m_enemyDeltaAngle, m_gameParams.m_enemyDrawAndDamageDistance, m_gameParams.m_enemyDrawAndDamageAngle, m_gameParams.m_enemyDamage, m_gameParams.m_enemyDamageDelay, enemyWaypoints, m_gameParams.m_isFrontDamageLineFlat, m_gameParams.m_isFrontViewLineFlat);
             
         }
@@ -111,12 +124,10 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
     }
 
-    public void SubscribeToPlayer(CharacterController character)
+    public void SubscribeToPlayer(PlayerController character)
     {
         character.m_death.AddListener(GameOver);
         character.m_cancelEvent.AddListener(EscapeButtonAction);
-
-
     }
 
 
@@ -146,7 +157,7 @@ public class GameManager : MonoBehaviour
     }
     public void TogglePauseGame()
     {
-        Time.timeScale = Time.timeScale == 0 ? 1 : 0; ;
+        Time.timeScale = Time.timeScale == 0 ? 1 : 0; 
         m_gameUI.TogglePauseScreen();
     }
     public void RestartGame()

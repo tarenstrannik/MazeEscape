@@ -44,7 +44,7 @@ public class MoveController : MonoBehaviour
     }
     protected virtual void FixedUpdate()
     {
-        
+       
         MoveAtDirection();
         var curDirection = new Vector3(m_movementDirection.normalized.x, 0, m_movementDirection.normalized.y);
         RotateAtDirection(curDirection);

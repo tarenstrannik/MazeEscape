@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.OnScreen;
-
+//using on screen stick in isolated mode as example recieve information from touch events, move stick visualisation, and pass eventdata to it (without isolated events control layout is switching between on screen and touch/kb+m, causing lags
 public class OnScreenStickFloating : MonoBehaviour
 {
     [SerializeField] private RectTransform m_stickArea;
@@ -144,6 +144,7 @@ public class OnScreenStickFloating : MonoBehaviour
 
     private void OnPointerUp(InputAction.CallbackContext ctx)
     {
+       
         m_stickHandle.EndInteraction();
         m_PointerMoveAction.performed -= OnPointerMove;
         m_stickOuter.gameObject.SetActive(false);

@@ -39,7 +39,7 @@ public class EnemyMove : MoveController
     public override void GoToPoint(Vector3 position)
     {
         if(m_rotatingCoroutine!=null) StopCoroutine(m_rotatingCoroutine);
-        
+        //moving to point ad in the same time rotationg to make forward direction collinear with moving direction
         NavMeshMove(position);
         RotateAtDirection(new Vector3((position - transform.position).normalized.x, 0, (position - transform.position).normalized.z));
         if (m_patrolingCoroutine == null) m_patrolingCoroutine = StartCoroutine(MovingCoroutine());
@@ -78,12 +78,13 @@ public class EnemyMove : MoveController
             yield return null;
         }
         m_patrolingCoroutine = null;
+        //starting patroling cycle again
         Patrol();
     }
     
     private IEnumerator RotatingCoroutine(Vector3 position)
     {
-       
+       //rotating to the next patroling point with defined speed and after that initiate moving to it
         while (Vector3.Angle(transform.forward.normalized, new Vector3((position - transform.position).normalized.x, 0, (position - transform.position).normalized.z)) > m_minDeltaRotation)
         {
             
@@ -96,6 +97,7 @@ public class EnemyMove : MoveController
     }
     private Vector3 GetNextPatrolingPoint()
     {
+        //getting point rotating to which  will be the smallest
         var curForward = transform.forward.normalized;
         var curDot = float.NegativeInfinity;
         Vector3 nextPoint = Vector3.zero;

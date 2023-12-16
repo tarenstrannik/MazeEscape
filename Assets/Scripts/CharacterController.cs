@@ -11,12 +11,11 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
     private AudioSource m_characterAudioSource;
 
     [SerializeField] private AudioClip m_damageAudio;
-    [SerializeField] private AudioClip m_healingAudio;
     [SerializeField] private AudioClip m_deathAudio;
     
     
     public UnityEvent m_death;
-    public UnityEvent m_cancelEvent;
+    
     public UnityEvent<float> m_damageRecieved;
 
     [SerializeField] protected float m_maxPersonHealth = 10f;
@@ -55,10 +54,7 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
 
     protected MoveController m_characterMove;
 
- 
-
-    // Start is called before the first frame update
-   
+    
     protected virtual void Awake()
     {
         m_personHealth = m_maxPersonHealth;
@@ -89,15 +85,7 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
 
         if (!IsDead)
         {
-            if (damage > 0)
-            {
                 if (m_damageAudio != null) m_characterAudioSource.PlayOneShot(m_damageAudio);
-            }
-            else
-            {
-                if (m_healingAudio != null) m_characterAudioSource.PlayOneShot(m_healingAudio);
-            }
-
         }
         
 
@@ -106,7 +94,7 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
     public virtual void Die()
     {
         m_isDead = true;
-        //m_characterMove.CharacterMovement(Vector2.zero);
+        
         if (m_deathAudio != null) m_characterAudioSource.PlayOneShot(m_deathAudio);
     }
 
