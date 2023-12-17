@@ -39,5 +39,8 @@ public class LabyrinthCell : MonoBehaviour
        //walls are numerated from 0 to 3 from the top wall clockwise
         m_walls[index].SetActive(false);
     }
-
+    public bool CheckIfWallOpen(int index)
+    {
+        return !m_walls[index].activeSelf;
+    }
 }

@@ -30,7 +30,11 @@ MonoBehaviour:
   m_enemyDamageDelay: 1
   m_minEnemyCount: 2
   m_maxEnemyCount: 6
+  m_minPercentOfEnemiesOnTheWay: 51.3
+  m_maxPercentOfEnemiesOnTheWay: 70.1
   m_enemyWaypointsMinNumber: 2
   m_enemyWaypointsMaxNumber: 5
   m_xLabyrinthSize: 9
   m_zLabyrinthSize: 5
+  m_minRouteLength: 15
+  m_maxRouteLength: 45

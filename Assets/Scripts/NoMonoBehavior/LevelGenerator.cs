@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.AI.Navigation;
 using UnityEngine.AI;
+using System.Linq;
+using UnityEngine.UIElements;
 
 public class LevelGenerator
 {
@@ -14,7 +16,18 @@ public class LevelGenerator
     private float m_deltaZ;
     private LabyrinthCell[,] m_labyrinthCellsArray;
     private List<LabyrinthCell> m_unusedlabyrinthCells = new List<LabyrinthCell>();
+
+    private List<LabyrinthCell> m_unusedlabyrinthCellsOnRoute = new List<LabyrinthCell>();
+
+    private List<LabyrinthCell> m_unusedlabyrinthCellsNotOnRoute = new List<LabyrinthCell>();
+
+    private List<LabyrinthCell> m_longestLabyrinthRoute = new List<LabyrinthCell>();
+    private List<LabyrinthCell> m_currentLabyrinthRoute = new List<LabyrinthCell>();
+    private List<LabyrinthCell> m_checkedCellsFromLabyrinthRoute = new List<LabyrinthCell>();
+
+
     private Finish m_finish;
+    private int m_length = 50;
     private bool m_isGenerationFinished = false;
     public bool IsGenerationFinished
     {
@@ -24,10 +37,11 @@ public class LevelGenerator
         }
     }
 
-    public void GenerateLevel(GameObject cellPrefab, GameObject finishPrefab, NavMeshSurface navMeshSurface,int xSize, int zSize, Transform parent)
+    public void GenerateLevel(GameObject cellPrefab, GameObject finishPrefab, NavMeshSurface navMeshSurface,int xSize, int zSize, int length, Transform parent)
     {
         m_labyrinthX = xSize;
         m_labyrinthZ = zSize;
+        m_length = length;
         //calculating offstep from the border to place labyrinth in center of gameplace
         m_deltaX = (m_labyrinthX - 1) * cellPrefab.transform.localScale.x / 2;
         m_deltaZ = (m_labyrinthZ - 1) * cellPrefab.transform.localScale.z / 2;
@@ -35,8 +49,31 @@ public class LevelGenerator
         GenerateLabyrinth(cellPrefab, parent);
 
 
-        //generating exit
-        var cellForFinish = GetFreeRandomCell();
+        //generating interesting route
+        var start= GetFreeRandomCell();
+
+        m_checkedCellsFromLabyrinthRoute.Add(start);
+
+        BuildRoute(start);
+        //cells for generating enemies on the route
+        m_unusedlabyrinthCellsOnRoute.AddRange(m_longestLabyrinthRoute);
+
+        //removing start and finish from this list
+        m_unusedlabyrinthCellsOnRoute.Remove(m_unusedlabyrinthCellsOnRoute[0]);
+        m_unusedlabyrinthCellsOnRoute.Remove(m_unusedlabyrinthCellsOnRoute[m_unusedlabyrinthCellsOnRoute.Count - 1]);
+
+        var cellForFinish = m_longestLabyrinthRoute[m_longestLabyrinthRoute.Count-1];
+
+        //removing finish from all unused cells
+        m_unusedlabyrinthCells.Remove(cellForFinish);
+
+        //making list of cells not on the route
+        m_unusedlabyrinthCellsNotOnRoute.AddRange(m_unusedlabyrinthCells);
+        foreach (LabyrinthCell cell in m_unusedlabyrinthCellsOnRoute)
+        {
+            m_unusedlabyrinthCellsNotOnRoute.Remove(cell);
+        }
+        //placing finish at the end of the route
         var finishPos = new Vector3(cellForFinish.transform.position.x, finishPrefab.transform.position.y, cellForFinish.transform.position.z);
         m_finish = GameObject.Instantiate(finishPrefab, finishPos, finishPrefab.transform.rotation).GetComponent<Finish>();
         m_finish.transform.SetParent(parent);
@@ -51,7 +88,10 @@ public class LevelGenerator
     {
         return m_finish;
     }
-
+    public LabyrinthCell GetStart()
+    {
+        return m_longestLabyrinthRoute[0];
+    }
     private void GenerateLabyrinth(GameObject cellPrefab,Transform parent)
     {  
         //creating array to store labyrinth
@@ -180,11 +220,37 @@ public class LevelGenerator
         }
         var randIdex = Random.Range(0, m_unusedlabyrinthCells.Count);
         var cellToReturn = m_unusedlabyrinthCells[randIdex];
-        m_unusedlabyrinthCells.Remove(m_unusedlabyrinthCells[randIdex]);
+        m_unusedlabyrinthCells.Remove(cellToReturn);
 
         return cellToReturn;
     }
 
+    public LabyrinthCell GetFreeRandomCellOnRoute()
+    {
+        if (m_unusedlabyrinthCellsOnRoute.Count == 0)
+        {
+            return null;
+        }
+        var randIdex = Random.Range(0, m_unusedlabyrinthCellsOnRoute.Count-1);
+        var cellToReturn = m_unusedlabyrinthCellsOnRoute[randIdex];
+        m_unusedlabyrinthCells.Remove(cellToReturn);
+        m_unusedlabyrinthCellsOnRoute.Remove(cellToReturn);
+
+        return cellToReturn;
+    }
+    public LabyrinthCell GetFreeRandomCellNotOnRoute()
+    {
+        if (m_unusedlabyrinthCellsNotOnRoute.Count == 0)
+        {
+            return null;
+        }
+        var randIdex = Random.Range(0, m_unusedlabyrinthCellsNotOnRoute.Count - 1);
+        var cellToReturn = m_unusedlabyrinthCellsNotOnRoute[randIdex];
+        m_unusedlabyrinthCells.Remove(cellToReturn);
+        m_unusedlabyrinthCellsNotOnRoute.Remove(cellToReturn);
+
+        return cellToReturn;
+    }
     //generating waypoint coordinates in cell for the enemy
     public Vector3 GetWayPointInCell(LabyrinthCell cell,float deltaToWalls)
     {
@@ -196,5 +262,75 @@ public class LevelGenerator
         var waypointZ = Random.Range(zCenter - range, zCenter+range);
         
         return new Vector3(waypointX,0, waypointZ);
+    }
+
+
+
+    private void BuildRoute(LabyrinthCell curCell)
+    {
+
+        //add current cell to the route
+        m_currentLabyrinthRoute.Add(curCell);
+
+        //if current route longer then previous longest, replacing longest
+        if (m_currentLabyrinthRoute.Count > m_longestLabyrinthRoute.Count)
+        {
+            
+            m_longestLabyrinthRoute.Clear();
+            m_longestLabyrinthRoute.AddRange(m_currentLabyrinthRoute);
+            
+        }
+        //if reached target length - abort
+        if (m_longestLabyrinthRoute.Count == m_length) return;
+
+        
+        //getting next unused cell and repeating recursively untill no where to go. then come back one step and trying to find another way and so on
+        var nextCell = GetRandomNextRouteCell(curCell);
+        
+        while (nextCell != null)
+        {
+            BuildRoute(nextCell);
+            //if come back from child call of the method after reached target length - abort
+            if (m_longestLabyrinthRoute.Count == m_length) return;
+            nextCell = GetRandomNextRouteCell(curCell);
+           
+
+        };
+       //removing current cell from the route if it isn't long enogh and we need to come back
+        m_currentLabyrinthRoute.Remove(m_currentLabyrinthRoute[m_currentLabyrinthRoute.Count - 1]);
+
+    }
+
+    private LabyrinthCell GetRandomNextRouteCell(LabyrinthCell currentCell)
+    {
+        List<LabyrinthCell> cellsOptions = new List<LabyrinthCell>();
+        int xIndex = (int)ReturnCellIndexes(currentCell).x;
+        int zIndex = (int)ReturnCellIndexes(currentCell).y;
+
+        for(var i=0;i<4;i++)
+        {
+            if (currentCell.CheckIfWallOpen(i))
+            {
+                //if there is a route, calculating cell indexes and if it is not in the route yet - adding it to the route
+                var neighbourZ = zIndex - ((i - 1) % 2);
+                var neighbourX = xIndex - ((i - 2) % 2); 
+                if (!m_checkedCellsFromLabyrinthRoute.Contains(m_labyrinthCellsArray[neighbourX, neighbourZ]))
+                {
+                    cellsOptions.Add(m_labyrinthCellsArray[neighbourX, neighbourZ]);
+                }
+            }
+        }
+
+        //get random cell from the list if not empty
+        if (cellsOptions.Count > 0)
+        {
+            var random = Random.Range(0, cellsOptions.Count);
+            m_checkedCellsFromLabyrinthRoute.Add(cellsOptions[random]);
+            return m_checkedCellsFromLabyrinthRoute[m_checkedCellsFromLabyrinthRoute.Count-1];
+        }
+        else
+        {
+            return null;
+        }
     }
 }

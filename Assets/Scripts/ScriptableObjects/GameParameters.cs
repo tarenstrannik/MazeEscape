@@ -47,7 +47,11 @@ public class GameParameters : ScriptableObject
 
     public int m_minEnemyCount = 1;
     public int m_maxEnemyCount = 5;
-    
+    [Range(0, 100)]
+    public float m_minPercentOfEnemiesOnTheWay = 70;
+    [Range(0, 100)]
+    public float m_maxPercentOfEnemiesOnTheWay = 100;
+
     [Range(2,100)]
     public int m_enemyWaypointsMinNumber = 2;
     [Range(2, 100)]
@@ -63,9 +67,14 @@ public class GameParameters : ScriptableObject
     [Range(2, 5)]
     public int m_zLabyrinthSize = 5;
 
+    [Range(2, 100)]
+    public int m_minRouteLength = 9;
+    [Range(2, 100)]
+    public int m_maxRouteLength = 5;
+
     private void OnValidate()
     {
-        if (m_enemyWaypointsMinNumber > m_enemyWaypointsMaxNumber) m_enemyWaypointsMaxNumber = m_enemyWaypointsMinNumber;
+        m_enemyWaypointsMaxNumber = m_enemyWaypointsMinNumber < m_enemyWaypointsMaxNumber ? m_enemyWaypointsMaxNumber : m_enemyWaypointsMinNumber;
 
 
         var allCellsNumber = m_xLabyrinthSize * m_zLabyrinthSize;
@@ -73,10 +82,14 @@ public class GameParameters : ScriptableObject
         m_minEnemyCount = m_minEnemyCount < allCellsNumber - 2  ? m_minEnemyCount : allCellsNumber - 2 ;
         m_maxEnemyCount = m_maxEnemyCount < allCellsNumber - 2  ? m_maxEnemyCount : allCellsNumber - 2 ;
 
+        m_maxPercentOfEnemiesOnTheWay = m_maxPercentOfEnemiesOnTheWay > m_minPercentOfEnemiesOnTheWay ? m_maxPercentOfEnemiesOnTheWay : m_minPercentOfEnemiesOnTheWay;
 
-        if (m_minEnemyCount > m_maxEnemyCount) m_maxEnemyCount = m_minEnemyCount;
+        m_maxEnemyCount = m_minEnemyCount < m_maxEnemyCount? m_maxEnemyCount : m_minEnemyCount;
 
-       
+        m_maxRouteLength = m_maxRouteLength < allCellsNumber ? m_maxRouteLength : allCellsNumber;
+        m_minRouteLength = m_minRouteLength < allCellsNumber ? m_minRouteLength : allCellsNumber;
+
+        m_maxRouteLength = m_maxRouteLength > m_minRouteLength ? m_maxRouteLength : m_minRouteLength;
 
     }
 }
