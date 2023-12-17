@@ -18,29 +18,29 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
     
     public UnityEvent<float> m_damageRecieved;
 
-    [SerializeField] protected float m_maxPersonHealth = 10f;
+    [SerializeField] protected float m_maxCharacterHealth = 10f;
 
-    public float MaxPersonHealth
+    public float MaxCharacterHealth
     {
         get
         {
-            return m_maxPersonHealth;
+            return m_maxCharacterHealth;
         }
         set
         {
-            m_maxPersonHealth = value;
+            m_maxCharacterHealth = value;
         }
     }
 
-    private float m_personHealth;
-    public float PersonHealth { 
+    private float m_characterHealth;
+    public float CharacterHealth { 
         get
         {
-            return m_personHealth;
+            return m_characterHealth;
         }
-        protected set
+        set
         {
-            m_personHealth = Mathf.Clamp(value, 0f, m_maxPersonHealth); ;
+            m_characterHealth = Mathf.Clamp(value, 0f, m_maxCharacterHealth); ;
         } 
     }
 
@@ -57,7 +57,7 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
     
     protected virtual void Awake()
     {
-        m_personHealth = m_maxPersonHealth;
+        
         m_characterMove = GetComponent<MoveController>();
         m_characterAudioSource = GetComponent<AudioSource>();
         m_death.AddListener(Die);
@@ -75,19 +75,20 @@ public class CharacterController : MonoBehaviour,IDamageble,ICanDie
     public virtual void ReceiveDamage(float damage)
     {
 
-        m_personHealth -= damage;
-        m_damageRecieved.Invoke(m_personHealth);
-        if (m_personHealth <= 0 && !m_isDead)
+        CharacterHealth -= damage;
+        m_damageRecieved.Invoke(m_characterHealth);
+        if (!m_isDead)
         {
-            m_death.Invoke();
-            
-        }
+            if (CharacterHealth <= 0 )
+            {
+                m_death.Invoke();
 
-        if (!IsDead)
-        {
+            }
+            else
+            {
                 if (m_damageAudio != null) m_characterAudioSource.PlayOneShot(m_damageAudio);
+            }
         }
-        
 
     }
 

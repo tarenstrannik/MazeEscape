@@ -34,15 +34,15 @@ public class CharacterUI : MonoBehaviour
 
     protected virtual void Start()
     {
-        SetInitialHealthValue(m_characterToFollow.GetComponent<CharacterController>().PersonHealth);
+        SetInitialHealthValueFromCharacter(m_characterToFollow.GetComponent<CharacterController>());
     }
-    public void SetInitialHealthValue(float value)
+    public void SetInitialHealthValueFromCharacter(CharacterController characterController)
     {
        
         if (m_characterHealth != null)
         {
-            m_characterHealth.maxValue = value;
-            m_characterHealth.value = value;
+            m_characterHealth.maxValue = characterController.MaxCharacterHealth;
+            m_characterHealth.value = characterController.CharacterHealth;
         }
        
     }

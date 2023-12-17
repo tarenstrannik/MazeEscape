@@ -34,7 +34,8 @@ public class CharacterGenerator
     }
     public void ConfigureCharacter(CharacterController character, float characterMaxHealth, float chracterSpeed, float characterRotationSpeed)
     {
-        character.MaxPersonHealth = characterMaxHealth;
+        character.MaxCharacterHealth = characterMaxHealth;
+        character.CharacterHealth = characterMaxHealth;
         var moveController = character.GetComponent<MoveController>();
         if (moveController != null)
         {

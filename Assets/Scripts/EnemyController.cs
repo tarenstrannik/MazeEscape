@@ -33,7 +33,6 @@ public class EnemyController : CharacterController
     }
 
     private Coroutine m_damageWaitingCoroutine = null;
-    private float m_curDamageTimer = 0f;
 
     private EnemyRaycasting m_enemyRaycasting;
     
@@ -60,7 +59,10 @@ public class EnemyController : CharacterController
 
     public void GiveDamage(GameObject target)
     {
-        if (target.GetComponent<IDamageble>() != null && target.GetComponent<ITargetForEnemy>() != null && target.GetComponent<ICanDie>() != null && !target.GetComponent<ICanDie>().IsDead)
+        if (target.GetComponent<IDamageble>() != null 
+            && target.GetComponent<ITargetForEnemy>() != null 
+            && target.GetComponent<ICanDie>() != null 
+            && !target.GetComponent<ICanDie>().IsDead)
         {
             if (m_damageWaitingCoroutine == null)
             {
@@ -75,12 +77,7 @@ public class EnemyController : CharacterController
     //adding delay between player recieving damage
     private IEnumerator DamageDelay()
     {
-        m_curDamageTimer = m_enemyDamageDelay;
-        while (m_curDamageTimer >= 0)
-        {
-            m_curDamageTimer -= Time.deltaTime;
-            yield return null;
-        }
+        yield return new WaitForSeconds(EnemyDamageDelay);
 
         m_damageWaitingCoroutine = null;
     }
