@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 2448150439490699906}
   - component: {fileID: 2448150439490699907}
   - component: {fileID: 2448150439490699904}
-  - component: {fileID: 2448150439490699905}
   - component: {fileID: 2448150439490699910}
   - component: {fileID: 2448150439490699911}
   - component: {fileID: 2448150439490699908}
@@ -120,18 +119,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 2
---- !u!114 &2448150439490699905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2448150439739957929}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 140b3846362f9374995cda9650e44bd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2448150439490699910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,18 +132,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_damageAudio: {fileID: 8300000, guid: db9482b1dfd5eff45850abd495424591, type: 3}
-  m_healingAudio: {fileID: 0}
   m_deathAudio: {fileID: 8300000, guid: 81e07c510c24c5f458103a3deb5283bd, type: 3}
   m_death:
-    m_PersistentCalls:
-      m_Calls: []
-  m_cancelEvent:
     m_PersistentCalls:
       m_Calls: []
   m_damageRecieved:
     m_PersistentCalls:
       m_Calls: []
-  m_maxPersonHealth: 10
+  m_maxCharacterHealth: 10
+  m_cancelEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2448150439490699911
 MonoBehaviour:
   m_ObjectHideFlags: 0
